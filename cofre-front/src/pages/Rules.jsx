@@ -49,7 +49,7 @@ function Rules() {
 
       sessionStorage.setItem("queue", JSON.stringify(response.data));
       sessionStorage.setItem("deviceId", selectedDevice);
-
+      
       navigate("/queue");
     } catch (error) {
       console.error(error);
