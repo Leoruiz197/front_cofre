@@ -19,6 +19,7 @@ function Rules() {
         setLoadingDevices(true);
 
         const response = await api.get("/devices/available");
+        console.log("DEVICES:", response.data);
 
         setDevices(response.data);
       } catch (error) {
@@ -49,6 +50,7 @@ function Rules() {
 
       sessionStorage.setItem("queue", JSON.stringify(response.data));
       sessionStorage.setItem("deviceId", selectedDevice);
+      sessionStorage.removeItem("queueDeadline");
       
       navigate("/queue");
     } catch (error) {
@@ -121,11 +123,19 @@ function Rules() {
               {loadingDevices ? "Carregando cofres..." : "Selecione um cofre"}
             </option>
 
-            {devices.map((device) => (
-              <option key={device._id} value={device._id}>
-                {device.nome || device.name || device.deviceId || `Cofre ${device._id}`}
-              </option>
-            ))}
+            {devices
+              .filter((device) => device.deviceId || device._id || device.id)
+              .map((device, index) => {
+                const deviceValue = device.deviceId || device._id || device.id;
+                const deviceLabel =
+                  device.nome || device.name || device.deviceId || `Cofre ${index + 1}`;
+
+                return (
+                  <option key={deviceValue} value={deviceValue}>
+                    {deviceLabel}
+                  </option>
+                );
+              })}
           </select>
         </div>
 
