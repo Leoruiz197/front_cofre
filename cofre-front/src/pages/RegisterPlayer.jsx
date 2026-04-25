@@ -44,6 +44,7 @@ function RegisterPlayer() {
   const [loadingLogin, setLoadingLogin] = useState(false);
   const [erroCadastro, setErroCadastro] = useState("");
   const [erroLogin, setErroLogin] = useState("");
+  const [aceitouLGPD, setAceitouLGPD] = useState(false);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -206,13 +207,31 @@ function RegisterPlayer() {
               ))}
             </select>
           </div>
+          
+          <label className="lgpd-checkbox">
+            <input
+              type="checkbox"
+              checked={aceitouLGPD}
+              onChange={(e) => setAceitouLGPD(e.target.checked)}
+            />
 
+            <span>
+              Li e concordo com a{" "}
+              <a
+                href="https://www.fiap.com.br/privacidade/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Política de Privacidade
+              </a>.
+            </span>
+          </label> 
           {erroCadastro && <p className="form-error">{erroCadastro}</p>}
 
           <button
             className="register-button"
             type="submit"
-            disabled={loadingCadastro}
+            disabled={loadingCadastro || !aceitouLGPD}
           >
             {loadingCadastro ? "Enviando..." : "Continuar para as regras"}
           </button>

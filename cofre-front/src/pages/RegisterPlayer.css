@@ -143,6 +143,10 @@
 
 .login-alt p {
   margin-bottom: 10px;
+  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
 }
 
 .login-inline {
@@ -181,6 +185,33 @@
   margin-top: 10px;
   margin-bottom: 0;
   color: #ff4f7b;
+}
+
+.lgpd-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 16px 0 12px;
+  font-size: 13px;
+  color: #999;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.lgpd-checkbox input {
+  margin-top: 3px;
+  accent-color: #ed145b;
+  cursor: pointer;
+}
+
+.lgpd-checkbox a {
+  color: #ed145b;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.lgpd-checkbox a:hover {
+  text-decoration: underline;
 }
 
 @media (max-width: 900px) {
