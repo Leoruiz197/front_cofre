@@ -63,24 +63,38 @@ function RegisterPlayer() {
     setLoadingCadastro(true);
 
     try {
-      await api.post("/users/register", formData);
+      const cadastroResponse = await api.post("/users/register", formData);
 
-      const loginResponse = await api.post("/users/login", {
-        email: formData.email,
-      });
-
-      sessionStorage.setItem("token", loginResponse.data.token);
-      sessionStorage.setItem("player", JSON.stringify(loginResponse.data.user));
-      console.log("TOKEN SALVO:", sessionStorage.getItem("token"));
-      navigate("/rules");
+      console.log("CADASTRO OK:", cadastroResponse.data);
     } catch (error) {
-      console.error(error);
+      console.error("ERRO NO CADASTRO:", error);
 
       const mensagem =
         error.response?.data?.message ||
         "Não foi possível realizar o cadastro. Tente novamente.";
 
       setErroCadastro(mensagem);
+      setLoadingCadastro(false);
+      return;
+    }
+
+    try {
+      const loginResponse = await api.post("/users/login", {
+        email: formData.email,
+      });
+
+      sessionStorage.setItem("token", loginResponse.data.token);
+      sessionStorage.setItem("player", JSON.stringify(loginResponse.data.user));
+
+      console.log("TOKEN SALVO:", sessionStorage.getItem("token"));
+
+      navigate("/rules");
+    } catch (error) {
+      console.error("ERRO NO LOGIN AUTOMÁTICO:", error);
+
+      setErroCadastro(
+        "Cadastro realizado, mas não foi possível fazer login automático. Use o campo 'Já se cadastrou?' abaixo."
+      );
     } finally {
       setLoadingCadastro(false);
     }
