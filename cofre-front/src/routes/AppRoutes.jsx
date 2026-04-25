@@ -3,6 +3,7 @@ import Home from "../pages/Home";
 import Rules from "../pages/Rules";
 import RegisterPlayer from "../pages/RegisterPlayer";
 import NotFound from "../pages/NotFound";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 function AppRoutes() {
   return (
@@ -10,7 +11,14 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/cadastro" element={<RegisterPlayer />} />
-        <Route path="/rules" element={<Rules />} />
+        <Route
+          path="/rules"
+          element={
+            <ProtectedRoute>
+              <Rules />
+            </ProtectedRoute>
+          }
+        />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

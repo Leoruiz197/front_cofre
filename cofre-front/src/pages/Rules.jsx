@@ -18,7 +18,7 @@ function Rules() {
         setErro("");
         setLoadingDevices(true);
 
-        const response = await api.get("/devices");
+        const response = await api.get("/devices/available");
 
         setDevices(response.data);
       } catch (error) {
