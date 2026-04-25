@@ -99,6 +99,78 @@
   transform: translateY(-2px);
 }
 
+.btn-back {
+  margin-bottom: 24px;
+  background: transparent;
+  border: none;
+  color: #ed145b;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 14px;
+  letter-spacing: 1px;
+  transition: 0.2s;
+}
+
+.btn-back:hover {
+  opacity: 0.7;
+  transform: translateX(-4px);
+}
+.rules-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.device-select-box {
+  margin-bottom: 20px;
+}
+
+.device-select-box label {
+  display: block;
+  margin-bottom: 8px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.device-select-box select {
+  width: 100%;
+  padding: 15px 16px;
+  border: 1px solid #333;
+  background: #111111;
+  color: #ffffff;
+  font-size: 15px;
+  outline: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.device-select-box select:focus {
+  border-color: #ed145b;
+  box-shadow: 0 0 0 2px rgba(237, 20, 91, 0.18);
+}
+
+.device-select-box select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.rules-error {
+  margin: 8px 0 18px;
+  color: #ff4f7b;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.rules-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
 @media (max-width: 700px) {
   .rules-page {
     padding: 24px;

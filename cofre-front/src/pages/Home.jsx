@@ -7,28 +7,25 @@ function Home() {
   return (
     <main className="app">
       <section className="hero">
-        <div className="badge">COFRE GAME</div>
+        <div className="badge">Crack The C0D3</div>
 
         <h1>
           Decifre o código.
           <br />
-          Vença o desafio.
+          Abra o cofre.
+          <br />
+          pegue seu prêmio.
         </h1>
 
         <p>
-          Uma experiência interativa conectando React, Node.js, WebSocket e ESP32
-          em tempo real.
+          Uma experiência interativa conectando você a um universo novo de tecnologia, alinhado às maiores experiências de mercado.
         </p>
 
         <div className="actions">
-          <button className="btn-primary">Entrar no jogo</button>
-
-          <button
-            className="btn-secondary"
-            onClick={() => navigate("/rules")}
-          >
-            Ver fila
+          <button className="btn-primary" onClick={() => navigate("/cadastro")}>
+            Entrar no jogo
           </button>
+
         </div>
       </section>
     </main>

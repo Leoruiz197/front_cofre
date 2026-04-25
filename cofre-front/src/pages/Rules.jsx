@@ -1,15 +1,79 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import api from "../api/api";
 import "./Rules.css";
 
 function Rules() {
-  function handleAcceptRules() {
-    // depois vamos trocar isso para navegar para /queue
-    console.log("Regras aceitas");
+  const navigate = useNavigate();
+
+  const [devices, setDevices] = useState([]);
+  const [selectedDevice, setSelectedDevice] = useState("");
+  const [loadingDevices, setLoadingDevices] = useState(true);
+  const [loadingJoin, setLoadingJoin] = useState(false);
+  const [erro, setErro] = useState("");
+
+  useEffect(() => {
+    async function loadDevices() {
+      try {
+        setErro("");
+        setLoadingDevices(true);
+
+        const response = await api.get("/devices");
+
+        setDevices(response.data);
+      } catch (error) {
+        console.error(error);
+        setErro("Não foi possível carregar os cofres disponíveis.");
+      } finally {
+        setLoadingDevices(false);
+      }
+    }
+
+    loadDevices();
+  }, []);
+
+  async function handleJoinQueue() {
+    setErro("");
+
+    if (!selectedDevice) {
+      setErro("Selecione um cofre antes de entrar na fila.");
+      return;
+    }
+
+    setLoadingJoin(true);
+
+    try {
+      const response = await api.post("/queue/join", {
+        deviceId: selectedDevice,
+      });
+
+      sessionStorage.setItem("queue", JSON.stringify(response.data));
+      sessionStorage.setItem("deviceId", selectedDevice);
+
+      navigate("/queue");
+    } catch (error) {
+      console.error(error);
+
+      const mensagem =
+        error.response?.data?.message ||
+        "Não foi possível entrar na fila. Tente novamente.";
+
+      setErro(mensagem);
+    } finally {
+      setLoadingJoin(false);
+    }
   }
 
   return (
     <main className="rules-page">
       <section className="rules-container">
-        <div className="rules-tag">ANTES DE COMEÇAR</div>
+        <div className="rules-header">
+          <div className="rules-tag">ANTES DE COMEÇAR</div>
+
+          <button className="btn-back" onClick={() => navigate("/")}>
+            ← Voltar
+          </button>
+        </div>
 
         <h1>Regras do desafio</h1>
 
@@ -45,8 +109,34 @@ function Rules() {
           </div>
         </div>
 
-        <button className="rules-button" onClick={handleAcceptRules}>
-          Aceitar regras e entrar na fila
+        <div className="device-select-box">
+          <label>Escolha o cofre</label>
+
+          <select
+            value={selectedDevice}
+            onChange={(event) => setSelectedDevice(event.target.value)}
+            disabled={loadingDevices}
+          >
+            <option value="">
+              {loadingDevices ? "Carregando cofres..." : "Selecione um cofre"}
+            </option>
+
+            {devices.map((device) => (
+              <option key={device._id} value={device._id}>
+                {device.nome || device.name || device.deviceId || `Cofre ${device._id}`}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {erro && <p className="rules-error">{erro}</p>}
+
+        <button
+          className="rules-button"
+          onClick={handleJoinQueue}
+          disabled={loadingJoin || loadingDevices}
+        >
+          {loadingJoin ? "Entrando na fila..." : "Aceitar regras e entrar na fila"}
         </button>
       </section>
     </main>
