@@ -55,50 +55,76 @@ function RegisterPlayer() {
     });
   }
 
-  async function handleSubmit(event) {
-    event.preventDefault();
+  function validarEmail(email) {
+  const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  return regexEmail.test(email);
+}
 
-    setErroCadastro("");
-    setErroLogin("");
-    setLoadingCadastro(true);
+function validarTelefone(telefone) {
+  const regexTelefone = /^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/;
+  return regexTelefone.test(telefone);
+}
 
-    try {
-      const cadastroResponse = await api.post("/users/register", formData);
+async function handleSubmit(event) {
+  event.preventDefault();
 
-      console.log("CADASTRO OK:", cadastroResponse.data);
-    } catch (error) {
-      console.error("ERRO NO CADASTRO:", error);
+  setErroCadastro("");
+  setErroLogin("");
 
-      const mensagem =
-        error.response?.data?.message ||
-        "Não foi possível realizar o cadastro. Tente novamente.";
-
-      setErroCadastro(mensagem);
-      setLoadingCadastro(false);
-      return;
-    }
-
-    try {
-      const loginResponse = await api.post("/users/login", {
-        email: formData.email,
-      });
-
-      sessionStorage.setItem("token", loginResponse.data.token);
-      sessionStorage.setItem("player", JSON.stringify(loginResponse.data.user));
-
-      console.log("TOKEN SALVO:", sessionStorage.getItem("token"));
-
-      navigate("/rules");
-    } catch (error) {
-      console.error("ERRO NO LOGIN AUTOMÁTICO:", error);
-
-      setErroCadastro(
-        "Cadastro realizado, mas não foi possível fazer login automático. Use o campo 'Já se cadastrou?' abaixo."
-      );
-    } finally {
-      setLoadingCadastro(false);
-    }
+  if (!validarEmail(formData.email)) {
+    setErroCadastro("Digite um e-mail válido.");
+    return;
   }
+
+  if (!validarTelefone(formData.telefone)) {
+    setErroCadastro("Digite um telefone válido. Exemplo: (11) 99999-9999.");
+    return;
+  }
+
+  if (!aceitouLGPD) {
+    setErroCadastro("Você precisa aceitar a Política de Privacidade para continuar.");
+    return;
+  }
+
+  setLoadingCadastro(true);
+
+  try {
+    const cadastroResponse = await api.post("/users/register", formData);
+
+    console.log("CADASTRO OK:", cadastroResponse.data);
+  } catch (error) {
+    console.error("ERRO NO CADASTRO:", error);
+
+    const mensagem =
+      error.response?.data?.message ||
+      "Não foi possível realizar o cadastro. Tente novamente.";
+
+    setErroCadastro(mensagem);
+    setLoadingCadastro(false);
+    return;
+  }
+
+  try {
+    const loginResponse = await api.post("/users/login", {
+      email: formData.email,
+    });
+
+    sessionStorage.setItem("token", loginResponse.data.token);
+    sessionStorage.setItem("player", JSON.stringify(loginResponse.data.user));
+
+    console.log("TOKEN SALVO:", sessionStorage.getItem("token"));
+
+    navigate("/rules");
+  } catch (error) {
+    console.error("ERRO NO LOGIN AUTOMÁTICO:", error);
+
+    setErroCadastro(
+      "Cadastro realizado, mas não foi possível fazer login automático. Use o campo 'Já se cadastrou?' abaixo."
+    );
+  } finally {
+    setLoadingCadastro(false);
+  }
+}
 
   async function handleLogin() {
   setErroLogin("");
@@ -184,6 +210,7 @@ function RegisterPlayer() {
               value={formData.telefone}
               onChange={handleChange}
               placeholder="(11) 99999-9999"
+              maxLength="15"
               required
             />
           </div>
