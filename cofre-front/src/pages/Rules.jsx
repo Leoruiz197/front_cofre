@@ -51,7 +51,7 @@ function Rules() {
       sessionStorage.setItem("queue", JSON.stringify(response.data));
       sessionStorage.setItem("deviceId", selectedDevice);
       sessionStorage.removeItem("queueDeadline");
-      
+
       navigate("/queue");
     } catch (error) {
       console.error(error);
@@ -123,19 +123,23 @@ function Rules() {
               {loadingDevices ? "Carregando cofres..." : "Selecione um cofre"}
             </option>
 
-            {devices
-              .filter((device) => device.deviceId || device._id || device.id)
-              .map((device, index) => {
-                const deviceValue = device.deviceId || device._id || device.id;
-                const deviceLabel =
-                  device.nome || device.name || device.deviceId || `Cofre ${index + 1}`;
+            {devices.map((device, index) => {
+              const deviceValue =
+                typeof device === "string"
+                  ? device
+                  : device.deviceId || device._id || device.id;
 
-                return (
-                  <option key={deviceValue} value={deviceValue}>
-                    {deviceLabel}
-                  </option>
-                );
-              })}
+              const deviceLabel =
+                typeof device === "string"
+                  ? device
+                  : device.nome || device.name || device.deviceId || `Cofre ${index + 1}`;
+
+              return (
+                <option key={deviceValue} value={deviceValue}>
+                  {deviceLabel}
+                </option>
+              );
+            })}
           </select>
         </div>
 
