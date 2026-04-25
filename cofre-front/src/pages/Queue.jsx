@@ -56,52 +56,73 @@ function Queue() {
     setErro("");
 
     try {
-      await api.post("/queue/start", { deviceId });
+        await api.post("/queue/start", { deviceId });
 
-      navigate("/game");
+        sessionStorage.removeItem("queueDeadline");
+
+        navigate("/game");
     } catch (error) {
-      console.error(error);
+        console.error(error);
 
-      const mensagem =
+        const mensagem =
         error.response?.data?.message ||
         "Não foi possível iniciar o jogo.";
 
-      setErro(mensagem);
+        setErro(mensagem);
     } finally {
-      setStarting(false);
+        setStarting(false);
     }
-  }
+    }
 
   useEffect(() => {
     loadPosition();
 
     const interval = setInterval(() => {
-      loadPosition();
+        loadPosition();
     }, 3000);
 
     return () => clearInterval(interval);
-  }, []);
+    }, [deviceId]);
 
   useEffect(() => {
-    if (position !== 1) {
-      setCountdown(60);
-      return;
+    if (position === null) {
+        return;
     }
 
-    const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          leaveQueueAndLogout();
-          return 0;
+    const currentPosition = Number(position);
+
+    if (currentPosition !== 1) {
+        sessionStorage.removeItem("queueDeadline");
+        setCountdown(60);
+        return;
+    }
+
+    let deadline = sessionStorage.getItem("queueDeadline");
+
+    if (!deadline) {
+        deadline = String(Date.now() + 60 * 1000);
+        sessionStorage.setItem("queueDeadline", deadline);
+    }
+
+    function updateCountdown() {
+        const remaining = Math.ceil((Number(deadline) - Date.now()) / 1000);
+
+        if (remaining <= 0) {
+        setCountdown(0);
+        sessionStorage.removeItem("queueDeadline");
+        leaveQueueAndLogout();
+        return;
         }
 
-        return prev - 1;
-      });
-    }, 1000);
+        setCountdown(remaining);
+    }
+
+    updateCountdown();
+
+    const timer = setInterval(updateCountdown, 1000);
 
     return () => clearInterval(timer);
-  }, [position]);
+    }, [position]);
 
   return (
     <main className="queue-page">
