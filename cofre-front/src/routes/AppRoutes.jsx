@@ -5,6 +5,9 @@ import RegisterPlayer from "../pages/RegisterPlayer";
 import Queue from "../pages/Queue";
 import NotFound from "../pages/NotFound";
 import ProtectedRoute from "../components/ProtectedRoute";
+import AdminLogin from "../pages/AdminLogin";
+import AdminDashboard from "../pages/AdminDashboard";
+import AdminRoute from "../components/AdminRoute";
 
 function AppRoutes() {
   return (
@@ -27,6 +30,17 @@ function AppRoutes() {
             <ProtectedRoute>
               <Queue />
             </ProtectedRoute>
+          }
+        />
+
+        <Route path="/admin/login" element={<AdminLogin />} />
+
+        <Route
+          path="/admin/dashboard"
+          element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
           }
         />
         
