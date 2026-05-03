@@ -40,11 +40,7 @@ function AdminDashboard() {
             };
           } catch (error) {
             console.error(`Erro ao carregar fila do ${device.deviceId}:`, error);
-
-            return {
-              ...device,
-              queue: [],
-            };
+            return { ...device, queue: [] };
           }
         })
       );
@@ -58,6 +54,23 @@ function AdminDashboard() {
     }
   }
 
+  async function updateDeviceStatus(deviceId, status) {
+    try {
+      await api.patch("/devices/updateStatus", {
+        deviceId,
+        status,
+      });
+
+      await loadDevices();
+    } catch (error) {
+      console.error(error);
+      alert(
+        error.response?.data?.message ||
+          "Erro ao atualizar status do cofre."
+      );
+    }
+  }
+
   async function sendCommand(deviceId, command, payload = {}) {
     try {
       let commands = [];
@@ -66,73 +79,48 @@ function AdminDashboard() {
         case "open":
           commands = [{ command: "LOCK", value: 0 }];
           break;
-
         case "close":
           commands = [{ command: "LOCK", value: 90 }];
           break;
-
         case "internal_light_on":
           commands = [{ command: "LED_INTERNAL", value: true }];
           break;
-
         case "internal_light_off":
           commands = [{ command: "LED_INTERNAL", value: false }];
           break;
-
         case "smoke_on":
           commands = [{ command: "SMOKE", value: true }];
           break;
-
         case "smoke_off":
           commands = [{ command: "SMOKE", value: false }];
           break;
-
         case "lights_off":
           commands = [{ command: "LEDS_OFF", value: true }];
           break;
-
         case "reset":
           commands = [{ command: "RESET", value: true }];
           break;
-
-        case "set_color":
+        case "set_color": {
           const hex = payload.color.replace("#", "");
-
           const r = parseInt(hex.substring(0, 2), 16);
           const g = parseInt(hex.substring(2, 4), 16);
           const b = parseInt(hex.substring(4, 6), 16);
 
-          commands = [
-            {
-              command: "LED",
-              target: "STRIP1",
-              r,
-              g,
-              b,
-            },
-          ];
+          commands = [{ command: "LED", target: "STRIP1", r, g, b }];
           break;
-
-        case "change_password":
-          commands = [{ command: "CHANGE_SECRET", value: payload.password }];
-          break;
-
+        }
         case "sound_success":
           commands = [{ command: "SOUND", value: "success" }];
           break;
-
         case "sound_error":
           commands = [{ command: "SOUND", value: "error" }];
           break;
-
         case "sound_hacker":
           commands = [{ command: "SOUND", value: "hacker" }];
           break;
-
         case "sound_stop":
           commands = [{ command: "SOUND_STOP", value: true }];
           break;
-
         default:
           console.warn("Comando desconhecido:", command);
           return;
@@ -193,6 +181,7 @@ function AdminDashboard() {
               deviceName={deviceName}
               device={device}
               onCommand={sendCommand}
+              onStatusChange={updateDeviceStatus}
             />
           );
         })}
@@ -201,7 +190,7 @@ function AdminDashboard() {
   );
 }
 
-function DeviceCard({ deviceId, deviceName, device, onCommand }) {
+function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange }) {
   const [color, setColor] = useState("#ed145b");
   const [newPassword, setNewPassword] = useState("");
   const [queueUsers, setQueueUsers] = useState([]);
@@ -228,10 +217,7 @@ function DeviceCard({ deviceId, deviceName, device, onCommand }) {
       const users = await Promise.all(
         queue.map(async (person) => {
           if (!person.userId) {
-            return {
-              ...person,
-              nome: "Usuário sem identificação",
-            };
+            return { ...person, nome: "Usuário sem identificação" };
           }
 
           try {
@@ -243,11 +229,7 @@ function DeviceCard({ deviceId, deviceName, device, onCommand }) {
             };
           } catch (error) {
             console.error(`Erro ao buscar usuário ${person.userId}:`, error);
-
-            return {
-              ...person,
-              nome: "Usuário não encontrado",
-            };
+            return { ...person, nome: "Usuário não encontrado" };
           }
         })
       );
@@ -271,9 +253,7 @@ function DeviceCard({ deviceId, deviceName, device, onCommand }) {
       return;
     }
 
-    const hasRepeatedNumbers = new Set(password).size !== password.length;
-
-    if (hasRepeatedNumbers) {
+    if (new Set(password).size !== password.length) {
       alert("A senha não pode repetir números.");
       return;
     }
@@ -288,14 +268,10 @@ function DeviceCard({ deviceId, deviceName, device, onCommand }) {
       alert("Senha alterada com sucesso.");
     } catch (error) {
       console.error(error);
-
-      alert(
-        error.response?.data?.message ||
-          "Erro ao trocar senha do cofre."
-      );
+      alert(error.response?.data?.message || "Erro ao trocar senha do cofre.");
     }
   }
-  
+
   function generatePassword() {
     const numbers = [];
 
@@ -307,8 +283,7 @@ function DeviceCard({ deviceId, deviceName, device, onCommand }) {
       }
     }
 
-    const password = numbers.join("");
-    setNewPassword(password);
+    setNewPassword(numbers.join(""));
   }
 
   return (
@@ -338,6 +313,20 @@ function DeviceCard({ deviceId, deviceName, device, onCommand }) {
                 currentPlayer.userId
               : "Ninguém jogando"}
           </strong>
+        </div>
+
+        <div className="info-box">
+          <span>Status do cofre</span>
+
+          <select
+            className="device-status-select"
+            value={device.status || "locked"}
+            onChange={(event) => onStatusChange(deviceId, event.target.value)}
+          >
+            <option value="locked">Locked</option>
+            <option value="blocked">Blocked</option>
+            <option value="unlocked">Unlocked</option>
+          </select>
         </div>
       </div>
 
@@ -446,15 +435,9 @@ function DeviceCard({ deviceId, deviceName, device, onCommand }) {
             placeholder="Nova senha"
           />
 
-          <button onClick={handleChangePassword}>
-            Trocar
-          </button>
+          <button onClick={handleChangePassword}>Trocar</button>
 
-          <button
-            type="button"
-            onClick={generatePassword}
-            className="btn-secondary"
-          >
+          <button type="button" onClick={generatePassword} className="btn-secondary">
             Gerar
           </button>
         </div>
