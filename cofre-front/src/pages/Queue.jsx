@@ -59,7 +59,8 @@ function Queue() {
         await api.post("/queue/start", { deviceId });
 
         sessionStorage.removeItem("queueDeadline");
-
+        sessionStorage.setItem("deviceId", deviceId);
+        
         navigate("/game");
     } catch (error) {
         console.error(error);

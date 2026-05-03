@@ -8,6 +8,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import AdminLogin from "../pages/AdminLogin";
 import AdminDashboard from "../pages/AdminDashboard";
 import AdminRoute from "../components/AdminRoute";
+import Game from "../pages/Game";
 
 function AppRoutes() {
   return (
@@ -41,6 +42,15 @@ function AppRoutes() {
             <AdminRoute>
               <AdminDashboard />
             </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/game"
+          element={
+            <ProtectedRoute>
+              <Game />
+            </ProtectedRoute>
           }
         />
         

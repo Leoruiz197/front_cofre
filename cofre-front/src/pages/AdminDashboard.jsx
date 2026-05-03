@@ -342,14 +342,14 @@ function DeviceCard({ deviceId, deviceName, device, onCommand }) {
       </div>
 
       <div className="toggles-panel">
-        <div className="toggle-row">
+        <div className="toggle-item">
           <span>Cofre</span>
 
           <div className="toggle-status">
             <strong>{isOpen ? "Aberto" : "Fechado"}</strong>
 
             <button
-              className={isOpen ? "switch active" : "switch"}
+              className={`switch ${isOpen ? "active" : ""}`}
               onClick={() => onCommand(deviceId, isOpen ? "close" : "open")}
               type="button"
             >
@@ -358,14 +358,14 @@ function DeviceCard({ deviceId, deviceName, device, onCommand }) {
           </div>
         </div>
 
-        <div className="toggle-row">
+        <div className="toggle-item">
           <span>Luz interna</span>
 
           <div className="toggle-status">
             <strong>{internalLight ? "Ligada" : "Desligada"}</strong>
 
             <button
-              className={internalLight ? "switch active" : "switch"}
+              className={`switch ${internalLight ? "active" : ""}`}
               onClick={() =>
                 onCommand(
                   deviceId,
@@ -379,14 +379,14 @@ function DeviceCard({ deviceId, deviceName, device, onCommand }) {
           </div>
         </div>
 
-        <div className="toggle-row">
+        <div className="toggle-item">
           <span>Fumaça</span>
 
           <div className="toggle-status">
             <strong>{smokeActive ? "Ligada" : "Desligada"}</strong>
 
             <button
-              className={smokeActive ? "switch active" : "switch"}
+              className={`switch ${smokeActive ? "active" : ""}`}
               onClick={() =>
                 onCommand(deviceId, smokeActive ? "smoke_off" : "smoke_on")
               }
