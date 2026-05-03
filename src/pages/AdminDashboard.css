@@ -1,0 +1,284 @@
+.admin-page {
+  min-height: 100vh;
+  padding: 48px;
+  background:
+    radial-gradient(circle at top right, rgba(237, 20, 91, 0.25), transparent 30%),
+    linear-gradient(135deg, #050505 0%, #111111 50%, #050505 100%);
+  color: #ffffff;
+}
+
+.admin-header {
+  max-width: 1100px;
+  margin-bottom: 36px;
+}
+
+.admin-tag {
+  display: inline-block;
+  margin-bottom: 20px;
+  padding: 8px 14px;
+  border: 1px solid #ed145b;
+  color: #ed145b;
+  font-size: 13px;
+  letter-spacing: 3px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.admin-header h1 {
+  margin: 0;
+  font-size: clamp(42px, 7vw, 86px);
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: -3px;
+}
+
+.admin-header p {
+  max-width: 760px;
+  color: #c7c7c7;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.admin-loading,
+.admin-error {
+  font-weight: 800;
+}
+
+.admin-error {
+  color: #ff4f7b;
+}
+
+.devices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 24px;
+}
+
+.device-card {
+  border: 1px solid #242424;
+  background: rgba(10, 10, 10, 0.9);
+  padding: 28px;
+  backdrop-filter: blur(12px);
+}
+
+.device-card-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.device-label {
+  display: block;
+  color: #999;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.device-card h2 {
+  margin: 0;
+  font-size: 30px;
+  text-transform: uppercase;
+}
+
+.status {
+  padding: 7px 10px;
+  border: 1px solid #444;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.status.online {
+  color: #2cff8f;
+  border-color: #2cff8f;
+}
+
+.status.offline {
+  color: #ff4f7b;
+  border-color: #ff4f7b;
+}
+
+.device-info-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.info-box {
+  border: 1px solid #242424;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 16px;
+}
+
+.info-box span {
+  display: block;
+  color: #999;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.info-box strong {
+  color: #ed145b;
+  font-size: 20px;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 1px solid #242424;
+  padding: 16px 0;
+}
+
+.toggle-row span {
+  color: #c7c7c7;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 13px;
+}
+
+.toggle {
+  min-width: 120px;
+  padding: 10px 14px;
+  border: 1px solid #555;
+  background: transparent;
+  color: #ffffff;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.toggle.active {
+  background: #ed145b;
+  border-color: #ed145b;
+}
+
+.actions-grid,
+.sound-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.actions-grid button,
+.sound-grid button,
+.color-row button,
+.password-row button {
+  border: 1px solid #333;
+  background: #111111;
+  color: #ffffff;
+  padding: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.actions-grid button:hover,
+.sound-grid button:hover,
+.color-row button:hover,
+.password-row button:hover {
+  border-color: #ed145b;
+  color: #ed145b;
+}
+
+.color-control,
+.password-control,
+.sound-control,
+.queue-box {
+  margin-top: 22px;
+}
+
+.color-control label,
+.password-control label,
+.sound-control label,
+.queue-box label {
+  display: block;
+  margin-bottom: 10px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.color-row,
+.password-row {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 10px;
+}
+
+.password-row {
+  grid-template-columns: 1fr 120px;
+}
+
+.color-row input,
+.password-row input {
+  width: 100%;
+  height: 48px;
+  border: 1px solid #333;
+  background: #111111;
+  color: #ffffff;
+  padding: 0 12px;
+  outline: none;
+}
+
+.color-row input:focus,
+.password-row input:focus {
+  border-color: #ed145b;
+}
+
+.queue-box {
+  border-top: 1px solid #242424;
+  padding-top: 20px;
+}
+
+.queue-box ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.queue-box li {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #1d1d1d;
+  color: #c7c7c7;
+}
+
+.queue-box li span {
+  color: #ed145b;
+  font-weight: 900;
+}
+
+.queue-box p {
+  color: #999;
+}
+
+@media (max-width: 600px) {
+  .admin-page {
+    padding: 24px;
+  }
+
+  .device-card {
+    padding: 22px;
+  }
+
+  .actions-grid,
+  .sound-grid,
+  .password-row {
+    grid-template-columns: 1fr;
+  }
+}

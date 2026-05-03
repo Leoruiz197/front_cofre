@@ -1,0 +1,141 @@
+button {
+  width: 100%;
+}
+
+.admin-login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at top right, rgba(237, 20, 91, 0.25), transparent 30%),
+    linear-gradient(135deg, #050505 0%, #111111 50%, #050505 100%);
+}
+
+.admin-login-box {
+  width: 100%;
+  max-width: 420px;
+  padding: 40px;
+  border: 1px solid #242424;
+  background: rgba(10, 10, 10, 0.9);
+}
+
+.admin-login-box h1 {
+  margin-bottom: 24px;
+  text-transform: uppercase;
+}
+
+.admin-login-box input {
+  width: 100%;
+  margin-bottom: 14px;
+  padding: 14px;
+  background: #111;
+  border: 1px solid #333;
+  color: #fff;
+}
+
+.admin-login-box input:focus {
+  border-color: #ed145b;
+}
+
+.admin-login-box button {
+  width: 100%;
+  padding: 14px;
+  background: #ed145b;
+  border: none;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.admin-error {
+  color: #ff4f7b;
+  margin-bottom: 12px;
+}.admin-login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at top right, rgba(237, 20, 91, 0.25), transparent 30%),
+    linear-gradient(135deg, #050505 0%, #111111 50%, #050505 100%);
+}
+
+.admin-login-box {
+  width: 100%;
+  max-width: 420px;
+  padding: 40px;
+  border: 1px solid #242424;
+  background: rgba(10, 10, 10, 0.9);
+}
+
+.admin-login-box h1 {
+  margin-bottom: 24px;
+  text-transform: uppercase;
+}
+
+.admin-login-box input {
+  width: 100%;
+  margin-bottom: 14px;
+  padding: 14px;
+  background: #111;
+  border: 1px solid #333;
+  color: #fff;
+}
+
+.admin-login-box input:focus {
+  border-color: #ed145b;
+}
+
+.admin-login-box button {
+  width: 100%;
+  padding: 14px;
+  background: #ed145b;
+  border: none;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.admin-error {
+  color: #ff4f7b;
+  margin-bottom: 12px;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-field input {
+  width: 100%;
+  padding-right: 70px;
+}
+
+.password-eye {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: auto !important;
+  padding: 0 !important;
+
+  background: transparent !important;
+  border: none !important;
+
+  color: #999;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 1px;
+
+  cursor: pointer;
+  text-transform: uppercase;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-eye:hover {
+  color: #ed145b;
+}

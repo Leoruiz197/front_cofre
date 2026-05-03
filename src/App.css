@@ -1,0 +1,116 @@
+.app {
+  min-height: 100vh;
+  padding: 48px;
+  display: grid;
+  grid-template-columns: 1.4fr 0.8fr;
+  gap: 32px;
+  align-items: center;
+}
+
+.hero {
+  max-width: 850px;
+}
+
+.badge {
+  display: inline-block;
+  margin-bottom: 24px;
+  padding: 8px 14px;
+  border: 1px solid #ed145b;
+  color: #ed145b;
+  font-size: 13px;
+  letter-spacing: 3px;
+  font-weight: 700;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(48px, 8vw, 96px);
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: -4px;
+}
+
+.hero p {
+  max-width: 620px;
+  margin: 28px 0;
+  color: #c7c7c7;
+  font-size: 20px;
+  line-height: 1.6;
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  padding: 16px 24px;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: 0.2s;
+}
+
+.btn-primary {
+  background: #ed145b;
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  background: #ff2b70;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid #444;
+}
+
+.btn-secondary:hover {
+  border-color: #ed145b;
+  color: #ed145b;
+}
+
+.panel {
+  padding: 32px;
+  border: 1px solid #222;
+  background: rgba(15, 15, 15, 0.85);
+  backdrop-filter: blur(12px);
+}
+
+.panel h2 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.status-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid #222;
+}
+
+.status-card span {
+  color: #999;
+}
+
+.status-card strong {
+  color: #ed145b;
+}
+
+@media (max-width: 850px) {
+  .app {
+    grid-template-columns: 1fr;
+    padding: 28px;
+  }
+
+  .hero h1 {
+    letter-spacing: -2px;
+  }
+}
