@@ -35,21 +35,26 @@ function Game() {
   }
 
   async function finishGame(redirectTo = "/") {
-    try {
-      if (deviceId) {
-        await api.post("/queue/finish", { deviceId });
-      }
-    } catch (error) {
-      console.error("Erro ao finalizar jogo:", error);
-    } finally {
-      sessionStorage.removeItem("deviceId");
-      sessionStorage.removeItem("queue");
-      sessionStorage.removeItem("queueDeadline");
-      sessionStorage.removeItem("gameDeadline");
+    const player = JSON.parse(sessionStorage.getItem("player"));
 
-      navigate(redirectTo, { replace: true });
+    try {
+        if (deviceId) {
+        await api.post("/queue/finish", {
+            deviceId,
+            userId: player?.id || player?._id,
+        });
+        }
+    } catch (error) {
+        console.error("Erro ao finalizar jogo:", error.response?.data || error);
+    } finally {
+        sessionStorage.removeItem("deviceId");
+        sessionStorage.removeItem("queue");
+        sessionStorage.removeItem("queueDeadline");
+        sessionStorage.removeItem("gameDeadline");
+
+        navigate(redirectTo, { replace: true });
     }
-  }
+    }
 
   async function handleAttempt(event) {
     event.preventDefault();
@@ -73,21 +78,24 @@ function Game() {
       setBons(response.data.bons || 0);
       setAttempts(response.data.attempts || 0);
 
-      if (response.data.win) {
-        await finishGame("/game/win");
+      if (remaining <= 0) {
+        setTimeLeft(0);
+        sessionStorage.setItem("gameResult", "lost");
+        finishGame("/game/finish");
         return;
       }
 
       setGuess("");
-    } catch (error) {
-      console.error(error);
+    }catch (error) {
+        console.error("ERRO GAME GUESS:", error.response?.data || error);
 
-      const mensagem =
-        error.response?.data?.message ||
-        "Não foi possível enviar sua tentativa.";
+        const mensagem =
+            error.response?.data?.message ||
+            error.response?.data?.error ||
+            "Não foi possível enviar sua tentativa.";
 
-      setErro(mensagem);
-    } finally {
+        setErro(mensagem);
+        } finally {
       setLoading(false);
     }
   }
@@ -139,9 +147,15 @@ function Game() {
         <div className="game-header">
           <div className="game-tag">CRACK THE C0D3</div>
 
-          <button className="game-exit" onClick={() => finishGame("/")}>
-            Sair
-          </button>
+            <button
+                className="game-exit"
+                onClick={() => {
+                    sessionStorage.setItem("gameResult", "lost");
+                    finishGame("/game/finish");
+                }}
+                >
+                Sair
+            </button>
         </div>
 
         <h1>Decifre o cofre</h1>
