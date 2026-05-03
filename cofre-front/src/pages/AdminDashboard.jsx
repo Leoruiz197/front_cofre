@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import "./AdminDashboard.css";
 
@@ -13,12 +14,42 @@ function AdminDashboard() {
   const [devices, setDevices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState("");
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    sessionStorage.clear();
+    navigate("/admin/login", { replace: true });
+  }
 
   async function loadDevices() {
     try {
       setErro("");
-      const response = await api.get("/devices");
-      setDevices(response.data);
+
+      const devicesResponse = await api.get("/devices");
+
+      const devicesWithQueue = await Promise.all(
+        devicesResponse.data.map(async (device) => {
+          try {
+            const queueResponse = await api.get(`/queue/${device.deviceId}`);
+
+            return {
+              ...device,
+              queue: Array.isArray(queueResponse.data)
+                ? queueResponse.data
+                : queueResponse.data?.queue || [],
+            };
+          } catch (error) {
+            console.error(`Erro ao carregar fila do ${device.deviceId}:`, error);
+
+            return {
+              ...device,
+              queue: [],
+            };
+          }
+        })
+      );
+
+      setDevices(devicesWithQueue);
     } catch (error) {
       console.error(error);
       setErro("Não foi possível carregar os cofres.");
@@ -29,9 +60,87 @@ function AdminDashboard() {
 
   async function sendCommand(deviceId, command, payload = {}) {
     try {
-      await api.post(`/devices/${deviceId}/command`, {
-        command,
-        payload,
+      let commands = [];
+
+      switch (command) {
+        case "open":
+          commands = [{ command: "LOCK", value: 0 }];
+          break;
+
+        case "close":
+          commands = [{ command: "LOCK", value: 90 }];
+          break;
+
+        case "internal_light_on":
+          commands = [{ command: "LED_INTERNAL", value: true }];
+          break;
+
+        case "internal_light_off":
+          commands = [{ command: "LED_INTERNAL", value: false }];
+          break;
+
+        case "smoke_on":
+          commands = [{ command: "SMOKE", value: true }];
+          break;
+
+        case "smoke_off":
+          commands = [{ command: "SMOKE", value: false }];
+          break;
+
+        case "lights_off":
+          commands = [{ command: "LEDS_OFF", value: true }];
+          break;
+
+        case "reset":
+          commands = [{ command: "RESET", value: true }];
+          break;
+
+        case "set_color":
+          const hex = payload.color.replace("#", "");
+
+          const r = parseInt(hex.substring(0, 2), 16);
+          const g = parseInt(hex.substring(2, 4), 16);
+          const b = parseInt(hex.substring(4, 6), 16);
+
+          commands = [
+            {
+              command: "LED",
+              target: "STRIP1",
+              r,
+              g,
+              b,
+            },
+          ];
+          break;
+
+        case "change_password":
+          commands = [{ command: "CHANGE_SECRET", value: payload.password }];
+          break;
+
+        case "sound_success":
+          commands = [{ command: "SOUND", value: "success" }];
+          break;
+
+        case "sound_error":
+          commands = [{ command: "SOUND", value: "error" }];
+          break;
+
+        case "sound_hacker":
+          commands = [{ command: "SOUND", value: "hacker" }];
+          break;
+
+        case "sound_stop":
+          commands = [{ command: "SOUND_STOP", value: true }];
+          break;
+
+        default:
+          console.warn("Comando desconhecido:", command);
+          return;
+      }
+
+      await api.post("/commands", {
+        deviceId,
+        commands,
       });
 
       await loadDevices();
@@ -52,7 +161,13 @@ function AdminDashboard() {
   return (
     <main className="admin-page">
       <section className="admin-header">
-        <div className="admin-tag">ADMIN</div>
+        <div className="admin-header-top">
+          <div className="admin-tag">ADMIN</div>
+
+          <button className="admin-logout" onClick={handleLogout}>
+            Sair
+          </button>
+        </div>
 
         <h1>Dashboard dos cofres</h1>
 
@@ -67,7 +182,7 @@ function AdminDashboard() {
 
       <section className="devices-grid">
         {devices.map((device, index) => {
-          const deviceId = device.deviceId || device._id || device.id || device;
+          const deviceId = device.deviceId || device._id || device.id;
           const deviceName =
             device.nome || device.name || device.deviceId || `Cofre ${index + 1}`;
 
@@ -89,35 +204,111 @@ function AdminDashboard() {
 function DeviceCard({ deviceId, deviceName, device, onCommand }) {
   const [color, setColor] = useState("#ed145b");
   const [newPassword, setNewPassword] = useState("");
+  const [queueUsers, setQueueUsers] = useState([]);
 
-  const queue = device.queue || device.fila || [];
-  const currentPlayer =
-    device.currentPlayer ||
-    device.jogadorAtual ||
-    device.currentUser ||
-    device.attacker ||
-    null;
+  const queue = Array.isArray(device.queue) ? device.queue : [];
+  const currentPlayer = queue.find((person) => person.status === "active");
 
-  const password =
-    device.password ||
-    device.senha ||
-    device.currentPassword ||
-    "Não informada";
+  const password = device.secret || "Não informada";
+  const isOpen = device.status === "unlocked" || device.status === "open";
+  const internalLight =
+    device.hardware?.leds?.some(
+      (led) => led.type === "internal" && led.active
+    ) || false;
+  const smokeActive = device.hardware?.smoke?.active || false;
+  const isOnline = String(device.state).toLowerCase() === "online";
 
-  const isOpen = device.isOpen || device.open || false;
-  const internalLight = device.internalLight || device.luzInterna || false;
+  useEffect(() => {
+    async function loadQueueUsers() {
+      if (queue.length === 0) {
+        setQueueUsers([]);
+        return;
+      }
 
-  function handleChangePassword() {
-    if (!newPassword.trim()) {
+      const users = await Promise.all(
+        queue.map(async (person) => {
+          if (!person.userId) {
+            return {
+              ...person,
+              nome: "Usuário sem identificação",
+            };
+          }
+
+          try {
+            const response = await api.get(`/users/${person.userId}`);
+
+            return {
+              ...person,
+              nome: response.data.nome || response.data.email || person.userId,
+            };
+          } catch (error) {
+            console.error(`Erro ao buscar usuário ${person.userId}:`, error);
+
+            return {
+              ...person,
+              nome: "Usuário não encontrado",
+            };
+          }
+        })
+      );
+
+      setQueueUsers(users);
+    }
+
+    loadQueueUsers();
+  }, [queue]);
+
+  async function handleChangePassword() {
+    const password = newPassword.trim();
+
+    if (!password) {
       alert("Digite uma nova senha.");
       return;
     }
 
-    onCommand(deviceId, "change_password", {
-      password: newPassword,
-    });
+    if (!/^\d{4}$/.test(password)) {
+      alert("A senha deve conter exatamente 4 números.");
+      return;
+    }
 
-    setNewPassword("");
+    const hasRepeatedNumbers = new Set(password).size !== password.length;
+
+    if (hasRepeatedNumbers) {
+      alert("A senha não pode repetir números.");
+      return;
+    }
+
+    try {
+      await api.patch("/devices/changePass", {
+        deviceId,
+        secret: password,
+      });
+
+      setNewPassword("");
+      alert("Senha alterada com sucesso.");
+    } catch (error) {
+      console.error(error);
+
+      alert(
+        error.response?.data?.message ||
+          "Erro ao trocar senha do cofre."
+      );
+    }
+  }
+  
+  function generatePassword() {
+    const numbers = [];
+
+    while (numbers.length < 4) {
+      const n = Math.floor(Math.random() * 10).toString();
+
+      if (!numbers.includes(n)) {
+        numbers.push(n);
+      }
+    }
+
+    const password = numbers.join("");
+    setNewPassword(password);
   }
 
   return (
@@ -128,8 +319,8 @@ function DeviceCard({ deviceId, deviceName, device, onCommand }) {
           <h2>{deviceName}</h2>
         </div>
 
-        <span className={device.online ? "status online" : "status offline"}>
-          {device.online ? "Online" : "Offline"}
+        <span className={isOnline ? "status online" : "status offline"}>
+          {isOnline ? "Online" : "Offline"}
         </span>
       </div>
 
@@ -142,53 +333,76 @@ function DeviceCard({ deviceId, deviceName, device, onCommand }) {
         <div className="info-box">
           <span>Jogador atual</span>
           <strong>
-            {currentPlayer?.nome_completo ||
-              currentPlayer?.name ||
-              currentPlayer?.email ||
-              "Ninguém jogando"}
+            {currentPlayer
+              ? queueUsers.find((user) => user._id === currentPlayer._id)?.nome ||
+                currentPlayer.userId
+              : "Ninguém jogando"}
           </strong>
         </div>
       </div>
 
-      <div className="toggle-row">
-        <span>Cofre</span>
+      <div className="toggles-panel">
+        <div className="toggle-row">
+          <span>Cofre</span>
 
-        <button
-          className={isOpen ? "toggle active" : "toggle"}
-          onClick={() => onCommand(deviceId, isOpen ? "close" : "open")}
-        >
-          {isOpen ? "Aberto" : "Fechado"}
-        </button>
-      </div>
+          <div className="toggle-status">
+            <strong>{isOpen ? "Aberto" : "Fechado"}</strong>
 
-      <div className="toggle-row">
-        <span>Luz interna</span>
+            <button
+              className={isOpen ? "switch active" : "switch"}
+              onClick={() => onCommand(deviceId, isOpen ? "close" : "open")}
+              type="button"
+            >
+              <span></span>
+            </button>
+          </div>
+        </div>
 
-        <button
-          className={internalLight ? "toggle active" : "toggle"}
-          onClick={() =>
-            onCommand(
-              deviceId,
-              internalLight ? "internal_light_off" : "internal_light_on"
-            )
-          }
-        >
-          {internalLight ? "Ligada" : "Desligada"}
-        </button>
+        <div className="toggle-row">
+          <span>Luz interna</span>
+
+          <div className="toggle-status">
+            <strong>{internalLight ? "Ligada" : "Desligada"}</strong>
+
+            <button
+              className={internalLight ? "switch active" : "switch"}
+              onClick={() =>
+                onCommand(
+                  deviceId,
+                  internalLight ? "internal_light_off" : "internal_light_on"
+                )
+              }
+              type="button"
+            >
+              <span></span>
+            </button>
+          </div>
+        </div>
+
+        <div className="toggle-row">
+          <span>Fumaça</span>
+
+          <div className="toggle-status">
+            <strong>{smokeActive ? "Ligada" : "Desligada"}</strong>
+
+            <button
+              className={smokeActive ? "switch active" : "switch"}
+              onClick={() =>
+                onCommand(deviceId, smokeActive ? "smoke_off" : "smoke_on")
+              }
+              type="button"
+            >
+              <span></span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="actions-grid">
-        <button onClick={() => onCommand(deviceId, "open")}>Abrir</button>
-        <button onClick={() => onCommand(deviceId, "close")}>Fechar</button>
-        <button onClick={() => onCommand(deviceId, "internal_light_on")}>
-          Ligar luz interna
-        </button>
-        <button onClick={() => onCommand(deviceId, "internal_light_off")}>
-          Desligar luz interna
-        </button>
         <button onClick={() => onCommand(deviceId, "lights_off")}>
           Apagar todas as luzes
         </button>
+
         <button onClick={() => onCommand(deviceId, "reset")}>
           Resetar cofre
         </button>
@@ -222,12 +436,27 @@ function DeviceCard({ deviceId, deviceName, device, onCommand }) {
         <div className="password-row">
           <input
             type="text"
+            inputMode="numeric"
+            maxLength="4"
             value={newPassword}
-            onChange={(event) => setNewPassword(event.target.value)}
+            onChange={(event) => {
+              const onlyNumbers = event.target.value.replace(/\D/g, "");
+              setNewPassword(onlyNumbers);
+            }}
             placeholder="Nova senha"
           />
 
-          <button onClick={handleChangePassword}>Trocar</button>
+          <button onClick={handleChangePassword}>
+            Trocar
+          </button>
+
+          <button
+            type="button"
+            onClick={generatePassword}
+            className="btn-secondary"
+          >
+            Gerar
+          </button>
         </div>
       </div>
 
@@ -249,12 +478,12 @@ function DeviceCard({ deviceId, deviceName, device, onCommand }) {
       <div className="queue-box">
         <label>Pessoas na fila</label>
 
-        {queue.length > 0 ? (
+        {queueUsers.length > 0 ? (
           <ul>
-            {queue.map((person, index) => (
-              <li key={person._id || person.id || index}>
+            {queueUsers.map((person, index) => (
+              <li key={person._id || person.userId || index}>
                 <span>{index + 1}º</span>
-                {person.nome_completo || person.name || person.email || person}
+                {person.nome} — {person.status}
               </li>
             ))}
           </ul>

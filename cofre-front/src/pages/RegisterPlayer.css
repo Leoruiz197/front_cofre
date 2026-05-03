@@ -152,6 +152,7 @@
 .login-inline {
   display: flex;
   gap: 10px;
+  align-items: center;
 }
 
 .login-inline input {
@@ -237,7 +238,28 @@
     flex-direction: column;
   }
 
+  .login-inline input,
   .login-button {
-    width: 100%;
+    width: 100% !important;
   }
+}
+
+
+.login-inline {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+}
+
+.login-inline input {
+  flex: 1;
+  min-width: 0;
+  width: auto;
+}
+
+.login-button {
+  width: auto !important;
+  flex: 0 0 auto;
+  min-width: 110px;
 }

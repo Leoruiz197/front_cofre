@@ -1,4 +1,5 @@
 .admin-page {
+  position: relative;
   min-height: 100vh;
   padding: 48px;
   background:
@@ -22,6 +23,28 @@
   letter-spacing: 3px;
   font-weight: 800;
   text-transform: uppercase;
+}
+
+.admin-logout {
+  position: absolute;
+  top: 48px;
+  right: 48px;
+  width: auto !important;
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid #ed145b;
+  color: #ed145b;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.admin-logout:hover {
+  background: #ed145b;
+  color: #ffffff;
 }
 
 .admin-header h1 {
@@ -64,19 +87,28 @@
 .device-card-header {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
   align-items: flex-start;
+  gap: 16px;
   margin-bottom: 24px;
 }
 
-.device-label {
+.device-label,
+.info-box span {
   display: block;
-  color: #999;
+  color: #999999;
   font-size: 12px;
   font-weight: 800;
   letter-spacing: 2px;
   text-transform: uppercase;
+}
+
+.device-label {
   margin-bottom: 6px;
+}
+
+.info-box span {
+  margin-bottom: 8px;
+  letter-spacing: 1px;
 }
 
 .device-card h2 {
@@ -87,7 +119,7 @@
 
 .status {
   padding: 7px 10px;
-  border: 1px solid #444;
+  border: 1px solid #444444;
   font-size: 12px;
   font-weight: 900;
   text-transform: uppercase;
@@ -105,7 +137,6 @@
 
 .device-info-grid {
   display: grid;
-  grid-template-columns: 1fr;
   gap: 12px;
   margin-bottom: 20px;
 }
@@ -116,51 +147,81 @@
   padding: 16px;
 }
 
-.info-box span {
-  display: block;
-  color: #999;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-
 .info-box strong {
   color: #ed145b;
   font-size: 20px;
 }
 
-.toggle-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+.toggles-panel {
   border-top: 1px solid #242424;
-  padding: 16px 0;
+  border-bottom: 1px solid #242424;
+  margin: 22px 0;
 }
 
-.toggle-row span {
+.toggle-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid #242424;
+}
+
+.toggle-row:last-child {
+  border-bottom: none;
+}
+
+.toggle-row > span {
   color: #c7c7c7;
-  font-weight: 800;
+  font-weight: 900;
   text-transform: uppercase;
   font-size: 13px;
 }
 
-.toggle {
-  min-width: 120px;
-  padding: 10px 14px;
-  border: 1px solid #555;
-  background: transparent;
-  color: #ffffff;
-  font-weight: 800;
-  text-transform: uppercase;
-  cursor: pointer;
+.toggle-status {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  width: 100%;
 }
 
-.toggle.active {
-  background: #ed145b;
+.toggle-status strong {
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.switch {
+  position: relative;
+  width: 54px !important;
+  height: 28px;
+  padding: 0 !important;
+  border: 1px solid #555555;
+  background: #111111;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.switch span {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  left: 4px;
+  top: 3px;
+  background: #777777;
+  transition: 0.2s;
+}
+
+.switch.active {
   border-color: #ed145b;
+  background: rgba(237, 20, 91, 0.18);
+}
+
+.switch.active span {
+  left: 28px;
+  background: #ed145b;
 }
 
 .actions-grid,
@@ -174,7 +235,7 @@
 .sound-grid button,
 .color-row button,
 .password-row button {
-  border: 1px solid #333;
+  border: 1px solid #333333;
   background: #111111;
   color: #ffffff;
   padding: 13px;
@@ -215,8 +276,11 @@
 .color-row,
 .password-row {
   display: grid;
-  grid-template-columns: 80px 1fr;
   gap: 10px;
+}
+
+.color-row {
+  grid-template-columns: 80px 1fr;
 }
 
 .password-row {
@@ -227,7 +291,7 @@
 .password-row input {
   width: 100%;
   height: 48px;
-  border: 1px solid #333;
+  border: 1px solid #333333;
   background: #111111;
   color: #ffffff;
   padding: 0 12px;
@@ -264,7 +328,24 @@
 }
 
 .queue-box p {
-  color: #999;
+  color: #999999;
+}
+
+.password-row {
+  display: grid;
+  grid-template-columns: 1fr 120px 120px;
+  gap: 10px;
+}
+
+.btn-secondary {
+  border: 1px solid #444;
+  background: #111;
+  color: #ccc;
+}
+
+.btn-secondary:hover {
+  border-color: #ed145b;
+  color: #ed145b;
 }
 
 @media (max-width: 600px) {
@@ -272,13 +353,24 @@
     padding: 24px;
   }
 
+  .admin-logout {
+    top: 24px;
+    right: 24px;
+  }
+
   .device-card {
     padding: 22px;
   }
 
+  .toggle-row,
   .actions-grid,
   .sound-grid,
+  .color-row,
   .password-row {
     grid-template-columns: 1fr;
+  }
+
+  .toggle-status {
+    justify-content: space-between;
   }
 }
