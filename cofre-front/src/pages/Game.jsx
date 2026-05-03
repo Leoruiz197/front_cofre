@@ -5,7 +5,6 @@ import "./Game.css";
 
 function Game() {
   const navigate = useNavigate();
-
   const deviceId = sessionStorage.getItem("deviceId");
 
   const [guess, setGuess] = useState("");
@@ -20,7 +19,7 @@ function Game() {
   async function loadGameState() {
     try {
       if (!deviceId) {
-        navigate("/");
+        navigate("/", { replace: true });
         return;
       }
 
@@ -34,27 +33,29 @@ function Game() {
     }
   }
 
-  async function finishGame(redirectTo = "/") {
+  async function finishGame(result = "lost") {
     const player = JSON.parse(sessionStorage.getItem("player"));
 
-    try {
-        if (deviceId) {
-        await api.post("/queue/finish", {
-            deviceId,
-            userId: player?.id || player?._id,
-        });
-        }
-    } catch (error) {
-        console.error("Erro ao finalizar jogo:", error.response?.data || error);
-    } finally {
-        sessionStorage.removeItem("deviceId");
-        sessionStorage.removeItem("queue");
-        sessionStorage.removeItem("queueDeadline");
-        sessionStorage.removeItem("gameDeadline");
+    sessionStorage.setItem("gameResult", result);
 
-        navigate(redirectTo, { replace: true });
+    try {
+      if (deviceId) {
+        await api.post("/queue/finish", {
+          deviceId,
+          userId: player?.id || player?._id,
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao finalizar jogo:", error.response?.data || error);
+    } finally {
+      sessionStorage.removeItem("deviceId");
+      sessionStorage.removeItem("queue");
+      sessionStorage.removeItem("queueDeadline");
+      sessionStorage.removeItem("gameDeadline");
+
+      navigate("/game/finish", { replace: true });
     }
-    }
+  }
 
   async function handleAttempt(event) {
     event.preventDefault();
@@ -74,28 +75,46 @@ function Game() {
         guess,
       });
 
-      setOtimos(response.data.otimos || 0);
-      setBons(response.data.bons || 0);
-      setAttempts(response.data.attempts || 0);
+      const otimosResult = response.data.otimos || 0;
+      const bonsResult = response.data.bons || 0;
+      const attemptsResult = response.data.attempts || 0;
 
-      if (remaining <= 0) {
-        setTimeLeft(0);
-        sessionStorage.setItem("gameResult", "lost");
-        finishGame("/game/finish");
+      setOtimos(otimosResult);
+      setBons(bonsResult);
+      setAttempts(attemptsResult);
+
+      const venceu = response.data.win === true || otimosResult === 4;
+
+      if (venceu) {
+        await finishGame("win");
+        return;
+      }
+
+      const semTentativas =
+        response.data.remainingAttempts === 0 ||
+        response.data.gameOver === true;
+
+      if (semTentativas) {
+        await finishGame("lost");
         return;
       }
 
       setGuess("");
-    }catch (error) {
-        console.error("ERRO GAME GUESS:", error.response?.data || error);
+    } catch (error) {
+      console.error("ERRO GAME GUESS:", error.response?.data || error);
 
-        const mensagem =
-            error.response?.data?.message ||
-            error.response?.data?.error ||
-            "Não foi possível enviar sua tentativa.";
+      const mensagem =
+        error.response?.data?.error ||
+        error.response?.data?.message ||
+        "Não foi possível enviar sua tentativa.";
 
-        setErro(mensagem);
-        } finally {
+      if (mensagem.toLowerCase().includes("limite de tentativas")) {
+        await finishGame("lost");
+        return;
+      }
+
+      setErro(mensagem);
+    } finally {
       setLoading(false);
     }
   }
@@ -124,7 +143,7 @@ function Game() {
 
       if (remaining <= 0) {
         setTimeLeft(0);
-        finishGame("/");
+        finishGame("lost");
         return;
       }
 
@@ -147,15 +166,9 @@ function Game() {
         <div className="game-header">
           <div className="game-tag">CRACK THE C0D3</div>
 
-            <button
-                className="game-exit"
-                onClick={() => {
-                    sessionStorage.setItem("gameResult", "lost");
-                    finishGame("/game/finish");
-                }}
-                >
-                Sair
-            </button>
+          <button className="game-exit" onClick={() => finishGame("lost")}>
+            Sair
+          </button>
         </div>
 
         <h1>Decifre o cofre</h1>
