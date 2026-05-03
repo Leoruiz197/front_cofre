@@ -30,7 +30,7 @@ function GameFinish() {
         <p>
           {isWin
             ? "Parabéns. Você decifrou a senha correta e concluiu o desafio com sucesso. Espere a porta abrir e pegue o seu prêmio!"
-            : "O tempo acabou antes que você conseguisse decifrar a senha do cofre. Tente novamente mais tarde e boa sorte na próxima vez!"}
+            : "O tempo acabou ou as tentativas se esgotaram antes que você conseguisse decifrar a senha do cofre. Tente novamente mais tarde e boa sorte na próxima vez!"}
         </p>
 
         <button

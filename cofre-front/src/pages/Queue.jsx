@@ -56,24 +56,38 @@ function Queue() {
     setErro("");
 
     try {
-        await api.post("/queue/start", { deviceId });
+      await api.post("/queue/start", { deviceId });
 
-        sessionStorage.removeItem("queueDeadline");
-        sessionStorage.setItem("deviceId", deviceId);
-        
-        navigate("/game");
+      sessionStorage.removeItem("queueDeadline");
+
+      navigate("/game");
     } catch (error) {
-        console.error(error);
+      console.error(error);
 
-        const mensagem =
+      const reason = error.response?.data?.reason;
+
+      if (reason === "SAFE_OPENED") {
+        sessionStorage.clear();
+
+        setErro("O cofre já foi aberto. A fila foi encerrada.");
+
+        setTimeout(() => {
+          navigate("/", { replace: true });
+        }, 5000);
+
+        return;
+      }
+
+      const mensagem =
         error.response?.data?.message ||
+        error.response?.data?.error ||
         "Não foi possível iniciar o jogo.";
 
-        setErro(mensagem);
+      setErro(mensagem);
     } finally {
-        setStarting(false);
+      setStarting(false);
     }
-    }
+  }
 
   useEffect(() => {
     loadPosition();
