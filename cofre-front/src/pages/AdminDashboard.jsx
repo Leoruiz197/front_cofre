@@ -124,7 +124,7 @@ function AdminDashboard() {
           break;
 
         case "reset":
-          commands = [{ command: "RESET", value: true }];
+          commands = [{ command: "RESET_EFFECT", value: true }];
           break;
 
         case "set_color": {
@@ -636,7 +636,7 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange })
             value={selectedTrack}
             onChange={(event) => setSelectedTrack(Number(event.target.value))}
           >
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((track) => (
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((track) => (
               <option key={track} value={track}>
                 Faixa {track}
               </option>
