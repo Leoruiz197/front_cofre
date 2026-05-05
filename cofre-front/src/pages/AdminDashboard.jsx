@@ -77,12 +77,26 @@ function AdminDashboard() {
 
       switch (command) {
 
+        case "set_servo_angles":
+          commands = [
+            {
+              command: "SET_SERVO",
+              open: payload.open,
+              close: payload.close,
+            },
+          ];
+          break;
+
         case "open":
-          commands = [{ command: "LOCK", value: 0 }];
+          commands = [{ command: "LOCK", value: "OPEN" }];
           break;
 
         case "close":
-          commands = [{ command: "LOCK", value: 90 }];
+          commands = [{ command: "LOCK", value: "CLOSE" }];
+          break;
+
+        case "servo_angle":
+          commands = [{ command: "LOCK", value: payload.angle }];
           break;
 
         case "internal_light_on":
@@ -230,6 +244,10 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange })
   const [queueUsers, setQueueUsers] = useState([]);
   const [volume, setVolume] = useState(20);
   const [selectedTrack, setSelectedTrack] = useState(1);
+
+  const [openAngle, setOpenAngle] = useState(30);
+  const [closeAngle, setCloseAngle] = useState(160);
+  const [testAngle, setTestAngle] = useState(45);
 
   const queue = Array.isArray(device.queue) ? device.queue : [];
   const currentPlayer = queue.find((person) => person.status === "active");
@@ -433,6 +451,64 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange })
               <span></span>
             </button>
           </div>
+        </div>
+      </div>
+
+      <div className="servo-control">
+        <label>Ajuste fino da porta</label>
+
+        <div className="servo-row">
+          <input
+            type="number"
+            min="0"
+            max="180"
+            value={openAngle}
+            onChange={(e) => setOpenAngle(Number(e.target.value))}
+            placeholder="Aberto"
+          />
+
+          <input
+            type="number"
+            min="0"
+            max="180"
+            value={closeAngle}
+            onChange={(e) => setCloseAngle(Number(e.target.value))}
+            placeholder="Fechado"
+          />
+
+          <button
+            type="button"
+            onClick={() =>
+              onCommand(deviceId, "set_servo_angles", {
+                open: openAngle,
+                close: closeAngle,
+              })
+            }
+          >
+            Salvar
+          </button>
+        </div>
+
+        <div className="servo-row">
+          <input
+            type="number"
+            min="0"
+            max="180"
+            value={testAngle}
+            onChange={(e) => setTestAngle(Number(e.target.value))}
+            placeholder="Ângulo teste"
+          />
+
+          <button
+            type="button"
+            onClick={() =>
+              onCommand(deviceId, "servo_angle", {
+                angle: testAngle,
+              })
+            }
+          >
+            Testar ângulo
+          </button>
         </div>
       </div>
 

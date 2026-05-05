@@ -555,6 +555,52 @@
   color: #ed145b;
 }
 
+.servo-control {
+  margin-top: 22px;
+}
+
+.servo-control label {
+  display: block;
+  margin-bottom: 10px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.servo-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 120px;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.servo-row:last-child {
+  grid-template-columns: 1fr 180px;
+  margin-bottom: 0;
+}
+
+.servo-row input,
+.servo-row button {
+  height: 48px;
+  border: 1px solid #333333;
+  background: #111111;
+  color: #ffffff;
+  padding: 0 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.servo-row button {
+  cursor: pointer;
+}
+
+.servo-row button:hover {
+  border-color: #ed145b;
+  color: #ed145b;
+}
+
 @media (max-width: 900px) {
   .toggles-panel {
     grid-template-columns: 1fr;
