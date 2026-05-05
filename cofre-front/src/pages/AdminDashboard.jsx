@@ -253,12 +253,16 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange })
   const currentPlayer = queue.find((person) => person.status === "active");
 
   const password = device.secret || "Não informada";
-  const isOpen = device.status === "unlocked" || device.status === "open";
+  const isOpen =
+    device.hardware?.door?.open ||
+    device.status === "unlocked" ||
+    device.status === "open";
+
   const internalLight =
-    device.hardware?.leds?.some(
-      (led) => led.type === "internal" && led.active
-    ) || false;
-  const smokeActive = device.hardware?.smoke?.active || false;
+    device.hardware?.internalLight?.active || false;
+
+  const smokeActive =
+    device.hardware?.smoke?.active || false;
   const isOnline = String(device.state).toLowerCase() === "online";
 
   useEffect(() => {
