@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import api from "../api/api";
 import "./AdminDashboard.css";
 
@@ -249,9 +249,9 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange })
   const [volume, setVolume] = useState(20);
   const [selectedTrack, setSelectedTrack] = useState(1);
 
-  const [openAngle, setOpenAngle] = useState(30);
-  const [closeAngle, setCloseAngle] = useState(160);
-  const [testAngle, setTestAngle] = useState(45);
+  const [openAngle, setOpenAngle] = useState(device.hardware?.servo?.openAngle ?? 30);
+  const [closeAngle, setCloseAngle] = useState(device.hardware?.servo?.closeAngle ?? 160);
+  const [testAngle, setTestAngle] = useState(device.hardware?.servo?.angle ?? 45);
 
   const queue = Array.isArray(device.queue) ? device.queue : [];
   const currentPlayer = queue.find((person) => person.status === "active");
@@ -262,12 +262,23 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange })
     device.status === "unlocked" ||
     device.status === "open";
 
+
   const internalLight =
     device.hardware?.internalLight?.active || false;
 
   const smokeActive =
     device.hardware?.smoke?.active || false;
   const isOnline = String(device.state).toLowerCase() === "online";
+
+  useEffect(() => {
+    setOpenAngle(device.hardware?.servo?.openAngle ?? 30);
+    setCloseAngle(device.hardware?.servo?.closeAngle ?? 160);
+    setTestAngle(device.hardware?.servo?.angle ?? 45);
+  }, [
+    device.hardware?.servo?.openAngle,
+    device.hardware?.servo?.closeAngle,
+    device.hardware?.servo?.angle,
+  ]);
 
   useEffect(() => {
     async function loadQueueUsers() {
