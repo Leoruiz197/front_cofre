@@ -512,6 +512,49 @@
   color: #ffffff;
 }
 
+.sound-track-control {
+  margin-top: 14px;
+}
+
+.sound-track-control label {
+  display: block;
+  margin-bottom: 10px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.sound-track-row {
+  display: grid;
+  grid-template-columns: 1fr 140px;
+  gap: 10px;
+}
+
+.sound-track-row select,
+.sound-track-row button {
+  height: 48px;
+  border: 1px solid #333333;
+  background: #111111;
+  color: #ffffff;
+  padding: 0 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  outline: none;
+}
+
+.sound-track-row button {
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.sound-track-row button:hover,
+.sound-track-row select:focus {
+  border-color: #ed145b;
+  color: #ed145b;
+}
+
 @media (max-width: 900px) {
   .toggles-panel {
     grid-template-columns: 1fr;

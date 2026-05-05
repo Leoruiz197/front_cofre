@@ -76,7 +76,7 @@ function AdminDashboard() {
       let commands = [];
 
       switch (command) {
-        
+
         case "open":
           commands = [{ command: "LOCK", value: 0 }];
           break;
@@ -143,6 +143,16 @@ function AdminDashboard() {
 
         case "sound_stop":
           commands = [{ command: "SOUND", action: "STOP" }];
+          break;
+
+        case "sound_play_track":
+          commands = [
+            {
+              command: "SOUND",
+              action: "PLAY",
+              track: payload.track,
+            },
+          ];
           break;
 
         default:
@@ -219,6 +229,7 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange })
   const [newPassword, setNewPassword] = useState("");
   const [queueUsers, setQueueUsers] = useState([]);
   const [volume, setVolume] = useState(20);
+  const [selectedTrack, setSelectedTrack] = useState(1);
 
   const queue = Array.isArray(device.queue) ? device.queue : [];
   const currentPlayer = queue.find((person) => person.status === "active");
@@ -530,6 +541,34 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange })
               {item.label}
             </button>
           ))}
+        </div>
+      </div>
+      <div className="sound-track-control">
+
+        <label>Selecionar faixa</label>
+
+        <div className="sound-track-row">
+          <select
+            value={selectedTrack}
+            onChange={(event) => setSelectedTrack(Number(event.target.value))}
+          >
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((track) => (
+              <option key={track} value={track}>
+                Faixa {track}
+              </option>
+            ))}
+          </select>
+
+          <button
+            type="button"
+            onClick={() =>
+              onCommand(deviceId, "sound_play_track", {
+                track: selectedTrack,
+              })
+            }
+          >
+            Play
+          </button>
         </div>
       </div>
 
