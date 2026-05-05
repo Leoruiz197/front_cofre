@@ -40,11 +40,12 @@
 }
 
 .finish-container p {
-  max-width: 720px;
+  max-width: 600px;
   margin: 28px auto 36px;
   color: #c7c7c7;
   font-size: 20px;
   line-height: 1.6;
+  text-wrap: balance;
 }
 
 .finish-button {

@@ -95,6 +95,10 @@ function AdminDashboard() {
           commands = [{ command: "LOCK", value: "CLOSE" }];
           break;
 
+        case "reset":
+          commands = [{ command: "RESET_EFFECT" }];
+          break;
+          
         case "servo_angle":
           commands = [{ command: "LOCK", value: payload.angle }];
           break;

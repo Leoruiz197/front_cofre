@@ -18,7 +18,7 @@ function Home() {
         </h1>
 
         <p>
-          Uma experiência interativa conectando você a um universo novo de tecnologia, alinhado às maiores experiências de mercado.
+          Uma experiência gamificada, unindo jogo, tecnologia e estratégia. Alinhado aos maiores desafios de mercado.
         </p>
 
         <div className="actions">

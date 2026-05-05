@@ -39,13 +39,25 @@
 }
 
 .queue-exit {
+  width: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+
   background: transparent;
   border: none;
   color: #ed145b;
+
   font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 1px;
   text-transform: uppercase;
+
   cursor: pointer;
   transition: 0.2s;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .queue-exit:hover {

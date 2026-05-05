@@ -7,6 +7,8 @@ function Game() {
   const navigate = useNavigate();
   const deviceId = sessionStorage.getItem("deviceId");
 
+  const [maxAttempts, setMaxAttempts] = useState(0);
+
   const [guess, setGuess] = useState("");
   const [bons, setBons] = useState(0);
   const [otimos, setOtimos] = useState(0);
@@ -27,6 +29,7 @@ function Game() {
 
       setStatus(response.data.status);
       setAttempts(response.data.attempts || 0);
+      setMaxAttempts(response.data.maxAttempts || 0);
     } catch (error) {
       console.error(error);
       setErro("Não foi possível carregar o estado do jogo.");
@@ -82,6 +85,7 @@ function Game() {
       setOtimos(otimosResult);
       setBons(bonsResult);
       setAttempts(attemptsResult);
+      setMaxAttempts(response.data.maxAttempts || maxAttempts);
 
       const venceu = response.data.win === true || otimosResult === 4;
 
@@ -188,7 +192,9 @@ function Game() {
 
           <div className="stat-card">
             <span>Tentativas</span>
-            <strong>{attempts}</strong>
+            <strong>
+              {attempts} / {maxAttempts || "-"}
+            </strong>
           </div>
 
           <div className="stat-card">

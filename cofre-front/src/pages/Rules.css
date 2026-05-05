@@ -21,11 +21,11 @@
 
 .rules-tag {
   display: inline-block;
-  margin-bottom: 24px;
+  margin-bottom: 0;
   padding: 8px 14px;
   border: 1px solid #ed145b;
   color: #ed145b;
-  font-size: 13px;
+  font-size: 20px;
   letter-spacing: 3px;
   font-weight: 700;
   text-transform: uppercase;
@@ -100,26 +100,37 @@
 }
 
 .btn-back {
-  margin-bottom: 24px;
+  width: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+
   background: transparent;
   border: none;
   color: #ed145b;
+
   font-weight: 700;
   cursor: pointer;
   font-size: 14px;
   letter-spacing: 1px;
+  text-transform: uppercase;
   transition: 0.2s;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-back:hover {
   opacity: 0.7;
   transform: translateX(-4px);
 }
+
 .rules-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  gap: 24px;
+  margin-bottom: 40px;
 }
 
 .device-select-box {

@@ -81,7 +81,7 @@ function Rules() {
 
         <p className="rules-intro">
           Leia as instruções antes de entrar na fila. Quando chegar sua vez,
-          você terá um tempo limitado para tentar decifrar o código do cofre.
+          você terá um tempo limitado e um número limitado de tentativas para tentar decifrar o código do cofre.
         </p>
 
         <div className="rules-list">
@@ -92,22 +92,22 @@ function Rules() {
 
           <div className="rule-card">
             <span>02</span>
-            <p>Quando o jogo começar, tente descobrir a combinação correta.</p>
+            <p>Quando o jogo começar, tente descobrir a combinação correta entre 4 números que não podem se repetir de 0 - 9. Ex: 5739</p>
           </div>
 
           <div className="rule-card">
             <span>03</span>
-            <p>Você terá um tempo limitado para enviar suas tentativas.</p>
+            <p>Você terá um tempo limitado para enviar suas tentativas e também um número limitado de tentativas.</p>
           </div>
 
           <div className="rule-card">
             <span>04</span>
-            <p>Ao acertar o código, o sistema enviará o comando para o dispositivo.</p>
+            <p>Ao acertar o código, o cofre abrirá e revelará seu prêmio.</p>
           </div>
 
           <div className="rule-card">
             <span>05</span>
-            <p>Se sair da página ou abandonar o jogo, sua vez poderá ser encerrada.</p>
+            <p>Se sair da página ou abandonar o jogo, sua vez poderá ser encerrada dando lugar ao próximo jogador.</p>
           </div>
         </div>
 
