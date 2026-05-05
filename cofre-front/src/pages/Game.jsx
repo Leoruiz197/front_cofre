@@ -105,11 +105,13 @@ function Game() {
 
       setGuess("");
     } catch (error) {
-      console.error("ERRO GAME GUESS:", error.response?.data || error);
+      const backendError = error.response?.data;
+
+      console.error("ERRO GAME GUESS:", backendError || error);
 
       const mensagem =
-        error.response?.data?.error ||
-        error.response?.data?.message ||
+        backendError?.error ||
+        backendError?.message ||
         "Não foi possível enviar sua tentativa.";
 
       if (mensagem.toLowerCase().includes("limite de tentativas")) {
