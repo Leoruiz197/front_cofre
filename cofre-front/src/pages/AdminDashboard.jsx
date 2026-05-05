@@ -76,30 +76,39 @@ function AdminDashboard() {
       let commands = [];
 
       switch (command) {
+        
         case "open":
           commands = [{ command: "LOCK", value: 0 }];
           break;
+
         case "close":
           commands = [{ command: "LOCK", value: 90 }];
           break;
+
         case "internal_light_on":
           commands = [{ command: "LED_INTERNAL", value: true }];
           break;
+
         case "internal_light_off":
           commands = [{ command: "LED_INTERNAL", value: false }];
           break;
+
         case "smoke_on":
           commands = [{ command: "SMOKE", value: true }];
           break;
+
         case "smoke_off":
           commands = [{ command: "SMOKE", value: false }];
           break;
+
         case "lights_off":
           commands = [{ command: "LEDS_OFF", value: true }];
           break;
+
         case "reset":
           commands = [{ command: "RESET", value: true }];
           break;
+
         case "set_color": {
           const hex = payload.color.replace("#", "");
           const r = parseInt(hex.substring(0, 2), 16);
@@ -109,18 +118,33 @@ function AdminDashboard() {
           commands = [{ command: "LED", target: "STRIP1", r, g, b }];
           break;
         }
+
+        case "volume":
+          commands = [
+            {
+              command: "SOUND",
+              action: "SET_VOLUME",
+              value: payload.value,
+            },
+          ];
+          break;
+
         case "sound_success":
-          commands = [{ command: "SOUND", value: "success" }];
+          commands = [{ command: "SOUND", action: "PLAY", track: 1 }];
           break;
+
         case "sound_error":
-          commands = [{ command: "SOUND", value: "error" }];
+          commands = [{ command: "SOUND", action: "PLAY", track: 2 }];
           break;
+
         case "sound_hacker":
-          commands = [{ command: "SOUND", value: "hacker" }];
+          commands = [{ command: "SOUND", action: "PLAY", track: 3 }];
           break;
+
         case "sound_stop":
-          commands = [{ command: "SOUND_STOP", value: true }];
+          commands = [{ command: "SOUND", action: "STOP" }];
           break;
+
         default:
           console.warn("Comando desconhecido:", command);
           return;
@@ -194,6 +218,7 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange })
   const [color, setColor] = useState("#ed145b");
   const [newPassword, setNewPassword] = useState("");
   const [queueUsers, setQueueUsers] = useState([]);
+  const [volume, setVolume] = useState(20);
 
   const queue = Array.isArray(device.queue) ? device.queue : [];
   const currentPlayer = queue.find((person) => person.status === "active");
@@ -239,6 +264,19 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange })
 
     loadQueueUsers();
   }, [queue]);
+
+  function handleVolumeChange(newVolume) {
+    if (newVolume < 0 || newVolume > 50) {
+      alert("Volume deve estar entre 0 e 50");
+      return;
+    }
+
+    setVolume(newVolume);
+
+    onCommand(deviceId, "volume", {
+      value: newVolume,
+    });
+  }
 
   async function handleChangePassword() {
     const password = newPassword.trim();
@@ -384,6 +422,43 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange })
               <span></span>
             </button>
           </div>
+        </div>
+      </div>
+
+      <div className="volume-control">
+        <label>Volume do som</label>
+
+        <div className="volume-row">
+          <button
+            onClick={() =>
+              handleVolumeChange(Math.max(volume - 1, 0))
+            }
+          >
+            -
+          </button>
+
+          <input
+            type="number"
+            min="0"
+            max="30"
+            value={volume}
+            onChange={(e) => setVolume(Number(e.target.value))}
+          />
+
+          <button
+            onClick={() =>
+              handleVolumeChange(Math.min(volume + 1, 30))
+            }
+          >
+            +
+          </button>
+
+          <button
+            className="btn-set"
+            onClick={() => handleVolumeChange(volume)}
+          >
+            SET
+          </button>
         </div>
       </div>
 
