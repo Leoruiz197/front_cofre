@@ -12,6 +12,9 @@ function Rules() {
   const [loadingJoin, setLoadingJoin] = useState(false);
   const [erro, setErro] = useState("");
 
+  const currentHour = new Date().getHours();
+  const activityNotStarted = currentHour < 14;
+
   useEffect(() => {
     async function loadDevices() {
       try {
@@ -35,6 +38,11 @@ function Rules() {
 
   async function handleJoinQueue() {
     setErro("");
+
+    if (activityNotStarted) {
+      setErro("A atividade estará disponível somente a partir das 14h.");
+      return;
+    }
 
     if (!selectedDevice) {
       setErro("Selecione um cofre antes de entrar na fila.");
@@ -81,8 +89,12 @@ function Rules() {
 
         <p className="rules-intro">
           Leia as instruções antes de entrar na fila. Quando chegar sua vez,
-          você terá um tempo limitado e um número limitado de tentativas para tentar decifrar o código do cofre.
+          você terá um tempo limitado para tentar decifrar o código do cofre.
         </p>
+
+        <div className="rules-alert">
+          A atividade estará disponível somente no período da tarde, a partir das 14h.
+        </div>
 
         <div className="rules-list">
           <div className="rule-card">
@@ -92,22 +104,22 @@ function Rules() {
 
           <div className="rule-card">
             <span>02</span>
-            <p>Quando o jogo começar, tente descobrir a combinação correta entre 4 números que não podem se repetir de 0 - 9. Ex: 5739</p>
+            <p>Quando o jogo começar, tente descobrir a combinação correta.</p>
           </div>
 
           <div className="rule-card">
             <span>03</span>
-            <p>Você terá um tempo limitado para enviar suas tentativas e também um número limitado de tentativas.</p>
+            <p>Você terá um tempo limitado para enviar suas tentativas.</p>
           </div>
 
           <div className="rule-card">
             <span>04</span>
-            <p>Ao acertar o código, o cofre abrirá e revelará seu prêmio.</p>
+            <p>Ao acertar o código, o sistema enviará o comando para o dispositivo.</p>
           </div>
 
           <div className="rule-card">
             <span>05</span>
-            <p>Se sair da página ou abandonar o jogo, sua vez poderá ser encerrada dando lugar ao próximo jogador.</p>
+            <p>Se sair da página ou abandonar o jogo, sua vez poderá ser encerrada.</p>
           </div>
         </div>
 
@@ -117,7 +129,7 @@ function Rules() {
           <select
             value={selectedDevice}
             onChange={(event) => setSelectedDevice(event.target.value)}
-            disabled={loadingDevices}
+            disabled={loadingDevices || activityNotStarted}
           >
             <option value="">
               {loadingDevices ? "Carregando cofres..." : "Selecione um cofre"}
@@ -148,9 +160,13 @@ function Rules() {
         <button
           className="rules-button"
           onClick={handleJoinQueue}
-          disabled={loadingJoin || loadingDevices}
+          disabled={loadingJoin || loadingDevices || activityNotStarted}
         >
-          {loadingJoin ? "Entrando na fila..." : "Aceitar regras e entrar na fila"}
+          {activityNotStarted
+            ? "Atividade disponível após as 14h"
+            : loadingJoin
+            ? "Entrando na fila..."
+            : "Aceitar regras e entrar na fila"}
         </button>
       </section>
     </main>
