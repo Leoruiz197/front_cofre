@@ -13,7 +13,7 @@ function Rules() {
   const [erro, setErro] = useState("");
 
   const currentHour = new Date().getHours();
-  const activityNotStarted = currentHour < 14;
+  const activityNotStarted = currentHour < 16;
 
   useEffect(() => {
     async function loadDevices() {
@@ -93,7 +93,7 @@ function Rules() {
         </p>
 
         <div className="rules-alert">
-          A atividade estará disponível somente no período da tarde, a partir das 14h.
+          A atividade estará disponível somente no período da tarde, a partir das 16h.
         </div>
 
         <div className="rules-list">
@@ -163,7 +163,7 @@ function Rules() {
           disabled={loadingJoin || loadingDevices || activityNotStarted}
         >
           {activityNotStarted
-            ? "Atividade disponível após as 14h"
+            ? "Atividade disponível após as 16h"
             : loadingJoin
             ? "Entrando na fila..."
             : "Aceitar regras e entrar na fila"}
