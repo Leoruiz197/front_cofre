@@ -12,8 +12,25 @@ function Rules() {
   const [loadingJoin, setLoadingJoin] = useState(false);
   const [erro, setErro] = useState("");
 
+  // =========================
+  // CONTROLE DE HORÁRIO
+  // =========================
+
+  const ENABLE_TIME_LOCK =
+    import.meta.env.VITE_ENABLE_TIME_LOCK === "true";
+
+  const START_HOUR = Number(
+    import.meta.env.VITE_ACTIVITY_START_HOUR || 16
+  );
+
   const currentHour = new Date().getHours();
-  const activityNotStarted = currentHour < 16;
+
+  const activityNotStarted =
+    ENABLE_TIME_LOCK && currentHour < START_HOUR;
+
+  // =========================
+  // CARREGAR COFRES
+  // =========================
 
   useEffect(() => {
     async function loadDevices() {
@@ -22,11 +39,13 @@ function Rules() {
         setLoadingDevices(true);
 
         const response = await api.get("/devices/available");
+
         console.log("DEVICES:", response.data);
 
         setDevices(response.data);
       } catch (error) {
         console.error(error);
+
         setErro("Não foi possível carregar os cofres disponíveis.");
       } finally {
         setLoadingDevices(false);
@@ -36,11 +55,18 @@ function Rules() {
     loadDevices();
   }, []);
 
+  // =========================
+  // ENTRAR NA FILA
+  // =========================
+
   async function handleJoinQueue() {
     setErro("");
 
     if (activityNotStarted) {
-      setErro("A atividade estará disponível somente a partir das 14h.");
+      setErro(
+        `A atividade estará disponível somente a partir das ${START_HOUR}h.`
+      );
+
       return;
     }
 
@@ -56,8 +82,13 @@ function Rules() {
         deviceId: selectedDevice,
       });
 
-      sessionStorage.setItem("queue", JSON.stringify(response.data));
+      sessionStorage.setItem(
+        "queue",
+        JSON.stringify(response.data)
+      );
+
       sessionStorage.setItem("deviceId", selectedDevice);
+
       sessionStorage.removeItem("queueDeadline");
 
       navigate("/queue");
@@ -77,77 +108,123 @@ function Rules() {
   return (
     <main className="rules-page">
       <section className="rules-container">
-        <div className="rules-header">
-          <div className="rules-tag">ANTES DE COMEÇAR</div>
 
-          <button className="btn-back" onClick={() => navigate("/")}>
+        {/* HEADER */}
+        <div className="rules-header">
+          <div className="rules-tag">
+            ANTES DE COMEÇAR
+          </div>
+
+          <button
+            className="btn-back"
+            onClick={() => navigate("/")}
+          >
             ← Voltar
           </button>
         </div>
 
+        {/* TÍTULO */}
         <h1>Regras do desafio</h1>
 
+        {/* INTRO */}
         <p className="rules-intro">
-          Leia as instruções antes de entrar na fila. Quando chegar sua vez,
-          você terá um tempo limitado para tentar decifrar o código do cofre.
+          Leia as instruções antes de entrar na fila.
+          Quando chegar sua vez, você terá um tempo
+          limitado para tentar decifrar o código do cofre.
         </p>
 
-        <div className="rules-alert">
-          A atividade estará disponível somente no período da tarde, a partir das 16h.
-        </div>
+        {/* ALERTA HORÁRIO */}
+        {ENABLE_TIME_LOCK && (
+          <div className="rules-alert">
+            A atividade estará disponível somente no período
+            da tarde, a partir das {START_HOUR}h.
+          </div>
+        )}
 
+        {/* REGRAS */}
         <div className="rules-list">
+
           <div className="rule-card">
             <span>01</span>
-            <p>Entre na fila e aguarde sua vez para iniciar o desafio.</p>
+            <p>
+              Entre na fila e aguarde sua vez para iniciar
+              o desafio.
+            </p>
           </div>
 
           <div className="rule-card">
             <span>02</span>
-            <p>Quando o jogo começar, tente descobrir a combinação correta.</p>
+            <p>
+              Quando o jogo começar, tente descobrir a
+              combinação correta.
+            </p>
           </div>
 
           <div className="rule-card">
             <span>03</span>
-            <p>Você terá um tempo limitado para enviar suas tentativas.</p>
+            <p>
+              Você terá um tempo limitado para enviar suas
+              tentativas.
+            </p>
           </div>
 
           <div className="rule-card">
             <span>04</span>
-            <p>Ao acertar o código, o sistema enviará o comando para o dispositivo.</p>
+            <p>
+              Ao acertar o código, o sistema enviará o
+              comando para o dispositivo.
+            </p>
           </div>
 
           <div className="rule-card">
             <span>05</span>
-            <p>Se sair da página ou abandonar o jogo, sua vez poderá ser encerrada.</p>
+            <p>
+              Se sair da página ou abandonar o jogo, sua vez
+              poderá ser encerrada.
+            </p>
           </div>
         </div>
 
+        {/* SELECT */}
         <div className="device-select-box">
           <label>Escolha o cofre</label>
 
           <select
             value={selectedDevice}
-            onChange={(event) => setSelectedDevice(event.target.value)}
-            disabled={loadingDevices || activityNotStarted}
+            onChange={(event) =>
+              setSelectedDevice(event.target.value)
+            }
+            disabled={
+              loadingDevices || activityNotStarted
+            }
           >
             <option value="">
-              {loadingDevices ? "Carregando cofres..." : "Selecione um cofre"}
+              {loadingDevices
+                ? "Carregando cofres..."
+                : "Selecione um cofre"}
             </option>
 
             {devices.map((device, index) => {
               const deviceValue =
                 typeof device === "string"
                   ? device
-                  : device.deviceId || device._id || device.id;
+                  : device.deviceId ||
+                    device._id ||
+                    device.id;
 
               const deviceLabel =
                 typeof device === "string"
                   ? device
-                  : device.nome || device.name || device.deviceId || `Cofre ${index + 1}`;
+                  : device.nome ||
+                    device.name ||
+                    device.deviceId ||
+                    `Cofre ${index + 1}`;
 
               return (
-                <option key={deviceValue} value={deviceValue}>
+                <option
+                  key={deviceValue}
+                  value={deviceValue}
+                >
                   {deviceLabel}
                 </option>
               );
@@ -155,19 +232,30 @@ function Rules() {
           </select>
         </div>
 
-        {erro && <p className="rules-error">{erro}</p>}
+        {/* ERRO */}
+        {erro && (
+          <p className="rules-error">
+            {erro}
+          </p>
+        )}
 
+        {/* BOTÃO */}
         <button
           className="rules-button"
           onClick={handleJoinQueue}
-          disabled={loadingJoin || loadingDevices || activityNotStarted}
+          disabled={
+            loadingJoin ||
+            loadingDevices ||
+            activityNotStarted
+          }
         >
           {activityNotStarted
-            ? "Atividade disponível após as 16h"
+            ? `Atividade disponível após as ${START_HOUR}h`
             : loadingJoin
             ? "Entrando na fila..."
             : "Aceitar regras e entrar na fila"}
         </button>
+
       </section>
     </main>
   );
