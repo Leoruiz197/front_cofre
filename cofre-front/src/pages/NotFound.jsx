@@ -13,7 +13,7 @@ function NotFound() {
     }, 10000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [navigate]);
 
   return (
     <main className="notfound-page">

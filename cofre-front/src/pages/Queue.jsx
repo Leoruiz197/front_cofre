@@ -90,54 +90,70 @@ function Queue() {
   }
 
   useEffect(() => {
-    loadPosition();
+    const timer = setTimeout(() => {
+      loadPosition();
+    }, 0);
 
     const interval = setInterval(() => {
-        loadPosition();
+      loadPosition();
     }, 3000);
 
-    return () => clearInterval(interval);
-    }, [deviceId]);
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deviceId]);
 
   useEffect(() => {
-    if (position === null) {
+    const timer = setTimeout(() => {
+      if (position === null) {
         return;
-    }
+      }
 
-    const currentPosition = Number(position);
+      const currentPosition = Number(position);
 
-    if (currentPosition !== 1) {
+      if (currentPosition !== 1) {
         sessionStorage.removeItem("queueDeadline");
         setCountdown(60);
         return;
-    }
+      }
 
-    let deadline = sessionStorage.getItem("queueDeadline");
+      let deadline = sessionStorage.getItem("queueDeadline");
 
-    if (!deadline) {
+      if (!deadline) {
         deadline = String(Date.now() + 60 * 1000);
         sessionStorage.setItem("queueDeadline", deadline);
-    }
+      }
 
-    function updateCountdown() {
+      function updateCountdown() {
         const remaining = Math.ceil((Number(deadline) - Date.now()) / 1000);
 
         if (remaining <= 0) {
-        setCountdown(0);
-        sessionStorage.removeItem("queueDeadline");
-        leaveQueueAndLogout();
-        return;
+          setCountdown(0);
+          sessionStorage.removeItem("queueDeadline");
+          leaveQueueAndLogout();
+          return;
         }
 
         setCountdown(remaining);
-    }
+      }
 
-    updateCountdown();
+      updateCountdown();
 
-    const timer = setInterval(updateCountdown, 1000);
+      const interval = setInterval(updateCountdown, 1000);
 
-    return () => clearInterval(timer);
-    }, [position]);
+      timer._interval = interval;
+    }, 0);
+
+    return () => {
+      clearTimeout(timer);
+      if (timer._interval) {
+        clearInterval(timer._interval);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [position]);
 
   return (
     <main className="queue-page">

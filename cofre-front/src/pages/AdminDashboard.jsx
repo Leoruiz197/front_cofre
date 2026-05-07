@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { data, useNavigate } from "react-router-dom";
+import { useEffect, useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import "./AdminDashboard.css";
 
@@ -123,10 +123,6 @@ function AdminDashboard() {
           commands = [{ command: "LEDS_OFF", value: true }];
           break;
 
-        case "reset":
-          commands = [{ command: "RESET_EFFECT", value: true }];
-          break;
-
         case "set_color": {
           const hex = payload.color.replace("#", "");
           const r = parseInt(hex.substring(0, 2), 16);
@@ -191,11 +187,16 @@ function AdminDashboard() {
   }
 
   useEffect(() => {
-    loadDevices();
+    const timer = setTimeout(() => {
+      loadDevices();
+    }, 0);
 
     const interval = setInterval(loadDevices, 3000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
   }, []);
 
   return (
@@ -253,7 +254,10 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange })
   const [closeAngle, setCloseAngle] = useState(device.hardware?.servo?.closeAngle ?? 160);
   const [testAngle, setTestAngle] = useState(device.hardware?.servo?.angle ?? 45);
 
-  const queue = Array.isArray(device.queue) ? device.queue : [];
+  const queue = useMemo(
+    () => (Array.isArray(device.queue) ? device.queue : []),
+    [device.queue]
+  );
   const currentPlayer = queue.find((person) => person.status === "active");
 
   const password = device.secret || "Não informada";
@@ -271,9 +275,13 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange })
   const isOnline = String(device.state).toLowerCase() === "online";
 
   useEffect(() => {
-    setOpenAngle(device.hardware?.servo?.openAngle ?? 30);
-    setCloseAngle(device.hardware?.servo?.closeAngle ?? 160);
-    setTestAngle(device.hardware?.servo?.angle ?? 45);
+    const timer = setTimeout(() => {
+      setOpenAngle(device.hardware?.servo?.openAngle ?? 30);
+      setCloseAngle(device.hardware?.servo?.closeAngle ?? 160);
+      setTestAngle(device.hardware?.servo?.angle ?? 45);
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [
     device.hardware?.servo?.openAngle,
     device.hardware?.servo?.closeAngle,
@@ -310,7 +318,11 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange })
       setQueueUsers(users);
     }
 
-    loadQueueUsers();
+    const timer = setTimeout(() => {
+      loadQueueUsers();
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [queue]);
 
   function handleVolumeChange(newVolume) {
@@ -546,14 +558,14 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange })
           <input
             type="number"
             min="0"
-            max="30"
+            max="50"
             value={volume}
             onChange={(e) => setVolume(Number(e.target.value))}
           />
 
           <button
             onClick={() =>
-              handleVolumeChange(Math.min(volume + 1, 30))
+              handleVolumeChange(Math.min(volume + 1, 50))
             }
           >
             +

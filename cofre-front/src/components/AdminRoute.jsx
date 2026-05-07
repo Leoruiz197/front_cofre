@@ -4,16 +4,16 @@ function AdminRoute({ children }) {
   const token = sessionStorage.getItem("token");
   const adminData = sessionStorage.getItem("admin");
 
-  let admin = null;
-
   try {
-    admin = adminData ? JSON.parse(adminData) : null;
-  } catch (error) {
+    if (adminData) {
+      JSON.parse(adminData);
+    }
+  } catch {
     sessionStorage.clear();
     return <Navigate to="/admin/login" replace />;
   }
 
-  if (!token || !admin) {
+  if (!token || !adminData) {
     return <Navigate to="/admin/login" replace />;
   }
 

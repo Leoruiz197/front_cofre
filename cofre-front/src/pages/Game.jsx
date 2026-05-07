@@ -37,7 +37,14 @@ function Game() {
   }
 
   async function finishGame(result = "lost") {
-    const player = JSON.parse(sessionStorage.getItem("player"));
+    let player = null;
+
+    try {
+      const raw = sessionStorage.getItem("player");
+      player = raw ? JSON.parse(raw) : null;
+    } catch {
+      // player remains null
+    }
 
     sessionStorage.setItem("gameResult", result);
 
@@ -131,8 +138,13 @@ function Game() {
       return;
     }
 
-    loadGameState();
-  }, []);
+    const timer = setTimeout(() => {
+      loadGameState();
+    }, 0);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deviceId, navigate]);
 
   useEffect(() => {
     if (!deviceId) return;
@@ -156,12 +168,18 @@ function Game() {
       setTimeLeft(remaining);
     }
 
-    updateTimer();
+    const initTimer = setTimeout(() => {
+      updateTimer();
+    }, 0);
 
     const timer = setInterval(updateTimer, 1000);
 
-    return () => clearInterval(timer);
-  }, []);
+    return () => {
+      clearTimeout(initTimer);
+      clearInterval(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deviceId]);
 
   const minutes = String(Math.floor(timeLeft / 60)).padStart(2, "0");
   const seconds = String(timeLeft % 60).padStart(2, "0");

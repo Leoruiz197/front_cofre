@@ -171,13 +171,28 @@ function Rules() {
           <div className="rule-card">
             <span>04</span>
             <p>
+              Números bons são números presentes na senha, porém na posição errada, basta trocá-los de posição até virarem números ótimos.
+            </p>
+          </div>
+
+          <div className="rule-card">
+            <span>05</span>
+            <p>
+              Números ótimos são números que estão presentes na senha e na posição correta. 
+              Agora, concentre-se em achar os demais números.
+            </p>
+          </div>
+
+          <div className="rule-card">
+            <span>06</span>
+            <p>
               Ao acertar o código, o sistema enviará o
               comando para o dispositivo.
             </p>
           </div>
 
           <div className="rule-card">
-            <span>05</span>
+            <span>07</span>
             <p>
               Se sair da página ou abandonar o jogo, sua vez
               poderá ser encerrada.

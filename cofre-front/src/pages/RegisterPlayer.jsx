@@ -4,6 +4,7 @@ import api from "../api/api";
 import "./RegisterPlayer.css";
 
 const formacoes = [
+  "Ensino Médio [incompleto]",
   "Ensino Médio [completo]",
   "Graduação [incompleta]",
   "Graduação [completa]",
