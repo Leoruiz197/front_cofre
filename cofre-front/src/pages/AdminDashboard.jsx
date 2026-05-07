@@ -73,9 +73,9 @@ function AdminDashboard() {
     }
   }
 
-  async function removeFromQueue(deviceId) {
+  async function removeFromQueue(deviceId, userId) {
     try {
-      await api.post("/queue/leave", { deviceId });
+      await api.post("/queue/leave", { deviceId, userId });
       await loadDevices();
     } catch (error) {
       console.error(error);
@@ -249,7 +249,7 @@ function AdminDashboard() {
               device={device}
               onCommand={sendCommand}
               onStatusChange={updateDeviceStatus}
-              onRemoveFromQueue={() => removeFromQueue(deviceId)}
+              onRemoveFromQueue={(userId) => removeFromQueue(deviceId, userId)}
             />
           );
         })}
@@ -731,7 +731,7 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange, o
                 <button
                   type="button"
                   className="queue-action-danger"
-                  onClick={() => onRemoveFromQueue()}
+                  onClick={() => onRemoveFromQueue(person._id)}
                 >
                   Remover
                 </button>
