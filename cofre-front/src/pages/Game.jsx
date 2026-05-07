@@ -5,7 +5,7 @@ import "./Game.css";
 
 function Game() {
   const navigate = useNavigate();
-  const deviceId = sessionStorage.getItem("deviceId");
+  const [deviceId] = useState(() => sessionStorage.getItem("deviceId"));
 
   const [maxAttempts, setMaxAttempts] = useState(0);
 
