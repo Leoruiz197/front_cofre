@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/api";
 import "./Game.css";
@@ -18,6 +18,7 @@ function Game() {
   const [loading, setLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState(180);
   const [guesses, setGuesses] = useState([]);
+  const finishedRef = useRef(false);
 
   async function loadGameState() {
     try {
@@ -41,6 +42,9 @@ function Game() {
   }
 
   async function finishGame(result = "lost") {
+    if (finishedRef.current) return;
+    finishedRef.current = true;
+
     let player = null;
 
     try {
