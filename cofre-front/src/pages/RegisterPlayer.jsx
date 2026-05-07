@@ -72,6 +72,11 @@ async function handleSubmit(event) {
   setErroCadastro("");
   setErroLogin("");
 
+  if (!formData.nome_completo.trim()) {
+    setErroCadastro("Preencha o nome completo.");
+    return;
+  }
+
   if (!validarEmail(formData.email)) {
     setErroCadastro("Digite um e-mail válido.");
     return;
@@ -79,6 +84,16 @@ async function handleSubmit(event) {
 
   if (!validarTelefone(formData.telefone)) {
     setErroCadastro("Digite um telefone válido. Exemplo: (11) 99999-9999.");
+    return;
+  }
+
+  if (!formData.formacao_academica) {
+    setErroCadastro("Selecione sua formação acadêmica.");
+    return;
+  }
+
+  if (!formData.area_interesse) {
+    setErroCadastro("Selecione sua área de interesse.");
     return;
   }
 
@@ -97,6 +112,7 @@ async function handleSubmit(event) {
 
     const mensagem =
       error.response?.data?.message ||
+      error.response?.data?.error ||
       "Não foi possível realizar o cadastro. Tente novamente.";
 
     setErroCadastro(mensagem);
