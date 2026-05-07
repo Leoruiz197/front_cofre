@@ -80,7 +80,9 @@ function AdminDashboard() {
     } catch (error) {
       console.error(error);
       alert(
-        error.response?.data?.message || "Erro ao remover jogador da fila."
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Erro ao remover jogador da fila."
       );
     }
   }
