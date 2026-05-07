@@ -106,6 +106,8 @@ function Queue() {
   }, [deviceId]);
 
   useEffect(() => {
+    let intervalId;
+
     const timer = setTimeout(() => {
       if (position === null) {
         return;
@@ -141,15 +143,13 @@ function Queue() {
 
       updateCountdown();
 
-      const interval = setInterval(updateCountdown, 1000);
-
-      timer._interval = interval;
+      intervalId = setInterval(updateCountdown, 1000);
     }, 0);
 
     return () => {
       clearTimeout(timer);
-      if (timer._interval) {
-        clearInterval(timer._interval);
+      if (intervalId) {
+        clearInterval(intervalId);
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
