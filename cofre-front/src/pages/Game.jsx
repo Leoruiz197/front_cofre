@@ -17,6 +17,7 @@ function Game() {
   const [erro, setErro] = useState("");
   const [loading, setLoading] = useState(false);
   const [timeLeft, setTimeLeft] = useState(180);
+  const [guesses, setGuesses] = useState([]);
 
   async function loadGameState() {
     try {
@@ -30,6 +31,9 @@ function Game() {
       setStatus(response.data.status);
       setAttempts(response.data.attempts || 0);
       setMaxAttempts(response.data.maxAttempts || 0);
+      if (response.data.guesses) {
+        setGuesses(response.data.guesses);
+      }
     } catch (error) {
       console.error(error);
       setErro("Não foi possível carregar o estado do jogo.");
@@ -93,6 +97,10 @@ function Game() {
       setBons(bonsResult);
       setAttempts(attemptsResult);
       setMaxAttempts(response.data.maxAttempts || maxAttempts);
+      setGuesses((prev) => [
+        ...prev,
+        { guess, bons: bonsResult, otimos: otimosResult },
+      ]);
 
       const venceu = response.data.win === true || otimosResult === 4;
 
@@ -256,6 +264,21 @@ function Game() {
           <span>Status do cofre</span>
           <strong>{status || "Carregando..."}</strong>
         </div>
+
+        {guesses.length > 0 && (
+          <div className="game-history">
+            <h3>Tentativas realizadas</h3>
+            <ul>
+              {guesses.map((item, idx) => (
+                <li key={idx}>
+                  <strong>{item.guess}</strong>
+                  <span>{item.bons} bons</span>
+                  <span>{item.otimos} ótimos</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </section>
     </main>
   );

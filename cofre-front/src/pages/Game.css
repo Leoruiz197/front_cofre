@@ -189,3 +189,54 @@
     grid-template-columns: 1fr;
   }
 }
+
+.game-history {
+  margin-top: 28px;
+  border-top: 1px solid #242424;
+  padding-top: 18px;
+}
+
+.game-history h3 {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.game-history ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.game-history li {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  border: 1px solid #242424;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.game-history li strong {
+  font-size: 22px;
+  letter-spacing: 4px;
+  color: #ffffff;
+  min-width: 80px;
+}
+
+.game-history li span {
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #c7c7c7;
+}
+
+.game-history li span:last-child {
+  color: #ed145b;
+}
