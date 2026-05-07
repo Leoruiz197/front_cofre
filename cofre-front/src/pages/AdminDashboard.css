@@ -626,3 +626,28 @@
     grid-template-columns: 1fr;
   }
 }
+
+.queue-admin-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.queue-action-danger {
+  min-width: 100px;
+  padding: 8px 14px;
+  border: 1px solid #ed145b;
+  background: transparent;
+  color: #ed145b;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.queue-action-danger:hover {
+  background: #ed145b;
+  color: #ffffff;
+}

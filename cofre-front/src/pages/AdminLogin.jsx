@@ -30,8 +30,6 @@ function AdminLogin() {
         senha,
         });
 
-        console.log("LOGIN ADMIN:", response.data);
-
         sessionStorage.setItem("token", response.data.token);
         sessionStorage.setItem("admin", JSON.stringify(response.data.admin));
 

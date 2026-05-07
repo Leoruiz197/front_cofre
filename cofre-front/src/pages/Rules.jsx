@@ -40,8 +40,6 @@ function Rules() {
 
         const response = await api.get("/devices/available");
 
-        console.log("DEVICES:", response.data);
-
         setDevices(response.data);
       } catch (error) {
         console.error(error);

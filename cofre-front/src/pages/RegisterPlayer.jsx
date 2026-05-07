@@ -89,11 +89,10 @@ async function handleSubmit(event) {
 
   setLoadingCadastro(true);
 
-  try {
-    const cadastroResponse = await api.post("/users/register", formData);
+    try {
+      await api.post("/users/register", formData);
 
-    console.log("CADASTRO OK:", cadastroResponse.data);
-  } catch (error) {
+    } catch (error) {
     console.error("ERRO NO CADASTRO:", error);
 
     const mensagem =
@@ -112,8 +111,6 @@ async function handleSubmit(event) {
 
     sessionStorage.setItem("token", loginResponse.data.token);
     sessionStorage.setItem("player", JSON.stringify(loginResponse.data.user));
-
-    console.log("TOKEN SALVO:", sessionStorage.getItem("token"));
 
     navigate("/rules");
   } catch (error) {
@@ -145,7 +142,6 @@ async function handleSubmit(event) {
 
     sessionStorage.setItem("token", response.data.token);
     sessionStorage.setItem("player", JSON.stringify(response.data.user));
-    console.log("TOKEN SALVO:", sessionStorage.getItem("token"));
     navigate("/rules");
   } catch (err) {
     console.error(err);

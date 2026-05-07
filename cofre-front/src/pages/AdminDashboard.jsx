@@ -39,7 +39,9 @@ function AdminDashboard() {
                 : queueResponse.data?.queue || [],
             };
           } catch (error) {
-            console.error(`Erro ao carregar fila do ${device.deviceId}:`, error);
+            if (error.response?.status !== 500) {
+              console.error(`Erro ao carregar fila do ${device.deviceId}:`, error);
+            }
             return { ...device, queue: [] };
           }
         })
@@ -67,6 +69,18 @@ function AdminDashboard() {
       alert(
         error.response?.data?.message ||
           "Erro ao atualizar status do cofre."
+      );
+    }
+  }
+
+  async function removeFromQueue(deviceId) {
+    try {
+      await api.post("/queue/leave", { deviceId });
+      await loadDevices();
+    } catch (error) {
+      console.error(error);
+      alert(
+        error.response?.data?.message || "Erro ao remover jogador da fila."
       );
     }
   }
@@ -235,6 +249,7 @@ function AdminDashboard() {
               device={device}
               onCommand={sendCommand}
               onStatusChange={updateDeviceStatus}
+              onRemoveFromQueue={() => removeFromQueue(deviceId)}
             />
           );
         })}
@@ -243,7 +258,7 @@ function AdminDashboard() {
   );
 }
 
-function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange }) {
+function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange, onRemoveFromQueue }) {
   const [color, setColor] = useState("#ed145b");
   const [newPassword, setNewPassword] = useState("");
   const [queueUsers, setQueueUsers] = useState([]);
@@ -716,7 +731,7 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange })
                 <button
                   type="button"
                   className="queue-action-danger"
-                  onClick={() => onRemoveFromQueue(person._id)}
+                  onClick={() => onRemoveFromQueue()}
                 >
                   Remover
                 </button>
