@@ -273,13 +273,17 @@ function Game() {
           <div className="game-history">
             <h3>Tentativas realizadas</h3>
             <ul>
-              {guesses.map((item, idx) => (
-                <li key={idx}>
-                  <strong>{item.guess}</strong>
-                  <span>{item.bons} bons</span>
-                  <span>{item.otimos} ótimos</span>
-                </li>
-              ))}
+              {[...guesses].reverse().map((item, idx) => {
+                const attemptNumber = guesses.length - idx;
+                return (
+                  <li key={idx}>
+                    <span className="attempt-number">{attemptNumber}</span>
+                    <strong>{item.guess}</strong>
+                    <span>{item.bons} bons</span>
+                    <span>{item.otimos} ótimos</span>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         )}
