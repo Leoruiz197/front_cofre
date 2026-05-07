@@ -601,6 +601,26 @@
   color: #ed145b;
 }
 
+.queue-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.queue-user-info strong {
+  color: #ffffff;
+}
+
+.queue-user-info span {
+  color: #ed145b;
+  margin-right: 6px;
+}
+
+.queue-user-info small {
+  color: #aaaaaa;
+  font-size: 13px;
+}
+
 @media (max-width: 900px) {
   .toggles-panel {
     grid-template-columns: 1fr;

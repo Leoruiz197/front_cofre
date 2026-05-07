@@ -685,9 +685,41 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange })
         {queueUsers.length > 0 ? (
           <ul>
             {queueUsers.map((person, index) => (
-              <li key={person._id || person.userId || index}>
-                <span>{index + 1}º</span>
-                {person.nome} — {person.status}
+              <li key={person._id || person.userId || index} className="queue-admin-item">
+                <div className="queue-user-info">
+                  <strong>
+                    <span>{index + 1}º</span> {person.nome}
+                  </strong>
+
+                  <small>Status: {person.status}</small>
+
+                  <small>
+                    Tentativas: {person.attemptsCount || 0} / {person.maxAttempts || "-"}
+                  </small>
+
+                  <small>
+                    Restantes: {person.remainingAttempts ?? "-"}
+                  </small>
+
+                  <small>
+                    Última tentativa: {person.lastGuess || "Nenhuma"}
+                  </small>
+
+                  <small>
+                    Início:{" "}
+                    {person.gameStartedAt
+                      ? new Date(person.gameStartedAt).toLocaleTimeString("pt-BR")
+                      : "Aguardando"}
+                  </small>
+                </div>
+
+                <button
+                  type="button"
+                  className="queue-action-danger"
+                  onClick={() => onRemoveFromQueue(person._id)}
+                >
+                  Remover
+                </button>
               </li>
             ))}
           </ul>
