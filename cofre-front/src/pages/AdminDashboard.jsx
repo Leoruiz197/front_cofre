@@ -73,28 +73,20 @@ function AdminDashboard() {
     }
   }
 
-  async function removeFromQueue(deviceId, userId) {
+  async function removeFromQueue(queueId) {
   try {
+    console.log("REMOVE QUEUE ENTRY:", queueId);
 
-    console.log("REMOVE USER:", {
-      deviceId,
-      userId,
-    });
-
-    await api.post("/queue/leave", {
-      deviceId,
-      userId,
+    await api.post("/queue/admin/remove", {
+      queueId,
     });
 
     await loadDevices();
-
   } catch (error) {
-
     console.error(error);
-
     alert(
-      error.response?.data?.message ||
       error.response?.data?.error ||
+      error.response?.data?.message ||
       "Erro ao remover jogador da fila."
     );
   }
@@ -264,7 +256,7 @@ function AdminDashboard() {
               device={device}
               onCommand={sendCommand}
               onStatusChange={updateDeviceStatus}
-              onRemoveFromQueue={(userId) => removeFromQueue(deviceId, userId)}
+              onRemoveFromQueue={removeFromQueue}
             />
           );
         })}
@@ -746,14 +738,7 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange, o
                 <button
                   type="button"
                   className="queue-action-danger"
-                  onClick={() => {
-                    const userId =
-                      typeof person.userId === "object"
-                        ? person.userId._id
-                        : person.userId;
-
-                    onRemoveFromQueue(userId);
-                  }}
+                  onClick={() => onRemoveFromQueue(person._id)}
                 >
                   Remover
                 </button>
