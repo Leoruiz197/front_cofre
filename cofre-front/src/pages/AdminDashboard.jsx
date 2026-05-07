@@ -282,9 +282,9 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange, o
 
   const password = device.secret || "Não informada";
   const isOpen =
-    device.hardware?.door?.open ||
-    device.status === "unlocked" ||
-    device.status === "open";
+    device.hardware?.door?.open === true ||
+    device.status === "open" ||
+    device.status === "unlocked";
 
 
   const internalLight =
@@ -514,7 +514,10 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange, o
             min="0"
             max="180"
             value={openAngle}
-            onChange={(e) => setOpenAngle(Number(e.target.value))}
+            onChange={(e) => {
+              const raw = e.target.value;
+              if (raw !== "") setOpenAngle(Number(raw));
+            }}
             placeholder="Aberto"
           />
 
@@ -523,7 +526,10 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange, o
             min="0"
             max="180"
             value={closeAngle}
-            onChange={(e) => setCloseAngle(Number(e.target.value))}
+            onChange={(e) => {
+              const raw = e.target.value;
+              if (raw !== "") setCloseAngle(Number(raw));
+            }}
             placeholder="Fechado"
           />
 
@@ -546,7 +552,10 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange, o
             min="0"
             max="180"
             value={testAngle}
-            onChange={(e) => setTestAngle(Number(e.target.value))}
+            onChange={(e) => {
+              const raw = e.target.value;
+              if (raw !== "") setTestAngle(Number(raw));
+            }}
             placeholder="Ângulo teste"
           />
 
@@ -580,7 +589,10 @@ function DeviceCard({ deviceId, deviceName, device, onCommand, onStatusChange, o
             min="0"
             max="50"
             value={volume}
-            onChange={(e) => setVolume(Number(e.target.value))}
+            onChange={(e) => {
+              const raw = e.target.value;
+              if (raw !== "") setVolume(Number(raw));
+            }}
           />
 
           <button
