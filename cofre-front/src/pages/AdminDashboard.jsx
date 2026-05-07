@@ -77,9 +77,7 @@ function AdminDashboard() {
   try {
     console.log("REMOVE QUEUE ENTRY:", queueId);
 
-    await api.post("/queue/admin/remove", {
-      queueId,
-    });
+    await api.post("/queue/admin/remove", { queueId });
 
     await loadDevices();
   } catch (error) {
